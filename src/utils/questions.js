@@ -3,12 +3,12 @@ import { te, TE, SUF, FORM, ruleV, IROW, masu } from './conjugation'
 
 const pick = a => a[Math.floor(Math.random() * a.length)]
 
-export const makeQuestion = (lesson, o) => (lesson === 9 ? make9(o) : make8(o))
+export const makeQuestion = (lesson, o, only) => (lesson === 9 ? make9(o) : make8(o, only))
 
-function make8({ groups, forms, adj }) {
+function make8({ groups, forms, adj }, only) {
   const pool = []
-  if (groups.length && forms.length) pool.push('v')
-  if (adj.length) pool.push('a')
+  if (only !== 'a' && groups.length && forms.length) pool.push('v')
+  if (only !== 'v' && adj.length) pool.push('a')
   if (!pool.length) return null
   if (pick(pool) === 'v') {
     const [k, r, g, pt] = pick(VERBS.filter(v => groups.includes(v[2])))

@@ -5,10 +5,10 @@ import { SENT, SENT9 } from '../data/sentences'
 import { flush } from '../utils/kana'
 import { useEnter } from '../utils/useEnter'
 
-const props = defineProps({ lesson: Number })
+const props = defineProps({ lesson: Number, topic: { type: Number, default: null } })
 defineEmits(['back'])
 
-const pool = props.lesson === 9 ? SENT9 : SENT
+const pool = (props.lesson === 9 ? SENT9 : SENT).filter(s => props.topic == null || s.t === props.topic)
 const typing = ref(false)
 const q = ref(null), picked = ref([]), bank = ref([]), typed = ref('')
 const answered = ref(false), good = ref(false), ok = ref(0), total = ref(0)
@@ -24,7 +24,7 @@ const tile = i => {
 
 function next() {
   const prev = q.value
-  do { q.value = pool[Math.floor(Math.random() * pool.length)] } while (q.value === prev)
+  do { q.value = pool[Math.floor(Math.random() * pool.length)] } while (pool.length > 1 && q.value === prev)
   answered.value = false
   picked.value = []
   typed.value = ''
