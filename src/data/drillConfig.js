@@ -12,3 +12,7 @@ CONF[2] = [{ blank: 1 }, { blank: 1 }, { blank: 1 }, { blank: 1 }]
 CONF[3] = [{ blank: 1 }, { blank: 1 }, { conj: 'masu', blank: 1 }, { blank: 1 }]
 CONF[4] = [{ blank: 1 }, { conj: 'i', blank: 1 }, { conj: 'na', blank: 1 }, { blank: 1 }]
 CONF[5] = [{ conj: 'past', blank: 1 }, { blank: 1 }, { conj: 'apast', blank: 1 }, { conj: 'tai', blank: 1 }]
+
+// Lições 6 e 7 (conj: 'invite' | 'te' | 'kata' | 'teiru')
+CONF[6] = [{ conj: 'invite', blank: 1 }, { blank: 1 }, { blank: 1 }, { blank: 1 }]
+CONF[7] = [{ blank: 1 }, { conj: 'te', blank: 1 }, { conj: 'kata', blank: 1 }, { conj: 'teiru', blank: 1 }]

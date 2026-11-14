@@ -37,23 +37,33 @@ function make9({ groups, forms }) {
 }
 
 // ---------- Lições 3 a 5 ----------
-const DEFAULT = { 3: ['masu'], 4: ['i', 'na'], 5: ['past', 'apast', 'tai'] }
+const DEFAULT = { 3: ['masu'], 4: ['i', 'na'], 5: ['past', 'apast', 'tai'], 6: ['invite'], 7: ['te', 'kata', 'teiru'] }
 function makeBasic(lesson, only) {
   const kind = only || pick(DEFAULT[lesson])
-  return ['masu', 'past', 'tai'].includes(kind) ? makeVerb(kind) : makeAdj(kind)
+  return ['masu', 'past', 'tai', 'invite', 'te', 'teiru', 'kata'].includes(kind) ? makeVerb(kind) : makeAdj(kind)
 }
 
-// verbo no dicionário → Vます / Vません / Vました / Vませんでした / Vたいです
+// verbo no dicionário → Vます, Vません, Vました, Vませんでした, Vたいです, Vませんか, Vましょう,
+// Vてください, Vています, Vかた
 function makeVerb(kind) {
-  const [k, r, g, pt] = pick(VERBSB)
+  const FORMS = { masu: ['masu', 'masen'], past: ['mashita', 'masendeshita'], tai: ['tai'], invite: ['masenka', 'mashou'],
+    te: ['te'], teiru: ['teiru'], kata: ['kata'] }
+  const f = pick(FORMS[kind])
+  const [k, r, g, pt] = pick(kind === 'kata' ? VERBSB.filter(v => v[2] !== 'irr') : VERBSB)
   const e = k.slice(-1)
-  const f = pick({ masu: ['masu', 'masen'], past: ['mashita', 'masendeshita'], tai: ['tai'] }[kind])
-  const SUF = { masu: 'ます', masen: 'ません', mashita: 'ました', masendeshita: 'ませんでした', tai: 'たいです' }
+  const SUF = { masu: 'ます', masen: 'ません', mashita: 'ました', masendeshita: 'ませんでした', tai: 'たいです',
+    masenka: 'ませんか', mashou: 'ましょう', te: 'ください', teiru: 'います', kata: '方' }
   const TAG = { masu: ['Vます', 'afirmativa polida'], masen: ['Vません', 'negativa polida'], mashita: ['Vました', 'passado'],
-    masendeshita: ['Vませんでした', 'passado negativo'], tai: ['Vたいです', 'querer fazer'] }
-  const mk = x => masu(x, g).slice(0, -2) + SUF[f]
+    masendeshita: ['Vませんでした', 'passado negativo'], tai: ['Vたいです', 'querer fazer'], masenka: ['Vませんか', 'convite'],
+    mashou: ['Vましょう', 'proposta'], te: ['Vてください', 'pedido'], teiru: ['Vています', 'em andamento'], kata: ['Vかた', 'o jeito de fazer'] }
+  const stem = x => masu(x, g).slice(0, -2)
+  const useTe = f === 'te' || f === 'teiru'
+  const mk = x => (useTe ? te(x, g) + SUF[f] : stem(x) + SUF[f])
+  const teRule = g === 'u' ? (k.endsWith('行く') ? 'Exceção: 行く → 行って' : `Grupo う: ${e} → ${TE[e]}`) : g === 'ru' ? 'Grupo る: tire る e coloque て' : 'Irregular: して, 来て'
   const base = g === 'u' ? `Grupo う: ${e} → ${IROW[e]}` : g === 'ru' ? 'Grupo る: tire る' : 'Irregular: する → し, 来る → き'
-  return { k, r, pt, tag: TAG[f], ans: [mk(k), mk(r)], rule: `${base} + ${SUF[f]}` }
+  const ans = f === 'kata' ? [stem(k) + '方', stem(r) + 'かた', stem(k) + 'かた'] : [mk(k), mk(r)]
+  const rule = useTe ? `${teRule} + ${SUF[f]}` : f === 'kata' ? 'Forma ます sem o ます + 方 (かた)' : `${base} + ${SUF[f]}`
+  return { k, r, pt, tag: TAG[f], ans, rule }
 }
 
 // adjetivo → negativo (lição 4) ou passado / passado negativo (lição 5)

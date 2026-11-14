@@ -119,3 +119,38 @@ BLANKS[5] = [
   [3, '新《あたら》しいかばん＿欲《ほ》しいです。', ['が', 'を', 'で'], 'が', 'Quero uma bolsa nova.', '欲しい pede が.'],
   [3, '温泉《おんせん》へ行《い》き＿です。', ['たい', 'たく', 'ます'], 'たい', 'Quero ir a uma fonte termal.', 'V (sem ます) + たいです.'],
 ]
+
+// ---------- Lições 6 e 7 ----------
+BLANKS[6] = [
+  [0, '一緒《いっしょ》に映画《えいが》を見《み》＿。', ['ませんか', 'ましたか', 'ています'], 'ませんか', 'Vamos assistir a um filme juntos?', 'Convite: Vませんか.'],
+  [0, '十二時《じゅうにじ》に会《あ》い＿。', ['ましょう', 'ません', 'ました'], 'ましょう', 'Vamos nos encontrar às 12.', 'Proposta: Vましょう.'],
+  [0, 'A: 一緒《いっしょ》に食《た》べませんか。B: ＿ね。行《い》きましょう。', ['いいです', 'ちょっと', 'まだです'], 'いいです', 'Boa ideia. Vamos!', 'Aceitar: いいですね.'],
+  [1, '土曜日《どようび》に公園《こうえん》＿祭《まつ》りがあります。', ['で', 'に', 'を'], 'で', 'No sábado haverá um festival no parque.', 'O local de um evento leva で.'],
+  [1, '今度《こんど》の日曜日《にちようび》、コンサートが＿。', ['あります', 'います', 'いきます'], 'あります', 'No próximo domingo haverá um show.', 'Evento: あります.'],
+  [1, '＿昼《ひる》ご飯《はん》を食《た》べましたか。', ['もう', 'まだ', 'よく'], 'もう', 'Você já almoçou?', 'もう = já.'],
+  [1, 'いいえ、＿です。', ['まだ', 'もう', 'ちょっと'], 'まだ', 'Não, ainda não.', 'まだ = ainda não.'],
+  [2, '電車《でんしゃ》は自転車《じてんしゃ》＿速《はや》いです。', ['より', 'から', 'まで'], 'より', 'O trem é mais rápido que a bicicleta.', 'より = do que.'],
+  [2, 'りんごとみかんと、＿が好《す》きですか。', ['どちら', 'どれ', 'どこ'], 'どちら', 'Qual você prefere, maçã ou tangerina?', 'どちら = qual (de dois).'],
+  [2, '果物《くだもの》の中《なか》でりんごが＿好《す》きです。', ['いちばん', 'あまり', '全然《ぜんぜん》'], 'いちばん', 'Entre as frutas, gosto mais de maçã.', 'いちばん = o mais.'],
+  [3, 'すみません、日曜日《にちようび》は＿…。', ['ちょっと', 'もう', 'まだ'], 'ちょっと', 'Desculpe, no domingo é meio difícil...', '〜はちょっと… = recusa educada.'],
+  [3, 'このお店《みせ》はおいしい＿。', ['よ', 'か', 'を'], 'よ', 'Este restaurante é gostoso, viu?', 'よ passa uma informação nova.'],
+  [3, 'おいしいです＿。', ['ね', 'か', 'を'], 'ね', 'Está gostoso, né?', 'ね busca concordância.'],
+]
+BLANKS[7] = [
+  [0, 'かばんは机《つくえ》の上《うえ》＿あります。', ['に', 'で', 'を'], 'に', 'A bolsa está em cima da mesa.', 'Lugar onde algo está: に.'],
+  [0, '田中《たなか》さんは台所《だいどころ》に＿。', ['います', 'あります', 'ありません'], 'います', 'Tanaka está na cozinha.', 'Pessoas e animais: います.'],
+  [0, '部屋《へや》にテレビ＿あります。', ['が', 'を', 'は'], 'が', 'Há uma TV no quarto.', 'O que existe no lugar leva が.'],
+  [0, '「後ろ」の読《よ》み方《かた》は？', ['うしろ', 'あとろ', 'ごろ'], 'うしろ', '', '後ろ = うしろ (atrás).'],
+  [1, 'ちょっと待《ま》って＿。', ['ください', 'ます', 'です'], 'ください', 'Espere um pouco, por favor.', 'Vて + ください.'],
+  [1, 'ここに名前《なまえ》を書《か》＿ください。', ['いて', 'って', 'んで'], 'いて', 'Escreva seu nome aqui.', '書く → 書いて (く → いて).'],
+  [1, 'お茶《ちゃ》を飲《の》＿ください。', ['んで', 'いて', 'って'], 'んで', 'Beba o chá, por favor.', '飲む → 飲んで (む → んで).'],
+  [1, '荷物《にもつ》を持《も》ち＿か。', ['ましょう', 'ません', 'ました'], 'ましょう', 'Quer que eu carregue sua bagagem?', 'Oferecer ajuda: Vましょうか.'],
+  [2, 'はし＿食《た》べます。', ['で', 'を', 'に'], 'で', 'Eu como com hashi.', 'で marca o instrumento.'],
+  [2, '日本語《にほんご》＿話《はな》します。', ['で', 'を', 'に'], 'で', 'Eu falo em japonês.', 'で marca a língua ou o meio.'],
+  [2, 'この漢字《かんじ》の読《よ》み＿を教《おし》えてください。', ['方《かた》', '人《ひと》', '時《とき》'], '方《かた》', 'Ensine-me como se lê este kanji.', 'V (sem ます) + 方 = o jeito de.'],
+  [2, 'あなたのかばんは＿ですか。', ['どれ', 'どの', 'どこ'], 'どれ', 'Qual é a sua bolsa?', 'どれ = qual (sem substantivo depois).'],
+  [2, '＿人《ひと》が田中《たなか》さんですか。', ['どの', 'どれ', 'どこ'], 'どの', 'Qual pessoa é o Tanaka?', 'どの + substantivo.'],
+  [3, '田中《たなか》さんは今《いま》料理《りょうり》をし＿。', ['ています', 'ました', 'ましょう'], 'ています', 'Tanaka está cozinhando agora.', 'Ação em andamento: Vています.'],
+  [3, '今《いま》、何《なに》を＿か。', ['していますか', 'しましたか', 'しませんか'], 'していますか', 'O que você está fazendo agora?', 'Vています também na pergunta.'],
+  [3, '友達《ともだち》は本《ほん》を読《よ》ん＿。', ['でいます', 'でください', 'でます'], 'でいます', 'Meu amigo está lendo um livro.', '読む → 読んで + います.'],
+]

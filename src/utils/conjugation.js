@@ -2,6 +2,7 @@ export const TE={う:"って",つ:"って",る:"って",む:"んで",ぶ:"んで
 export function te(w,g){
   if(g==="irr"){ if(w.endsWith("する")) return w.slice(0,-2)+"して"; return w==="来る"?"来て":"きて"; }
   if(g==="ru") return w.slice(0,-1)+"て";
+  if(w.endsWith("行く")||w==="いく") return w.slice(0,-1)+"って"; // exceção
   return w.slice(0,-1)+TE[w.slice(-1)];
 }
 export const SUF={pol:"います",neg:"いません",plain:"いる"};
