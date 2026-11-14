@@ -4,6 +4,7 @@ import KanaInput from './KanaInput.vue'
 import { SENTENCES } from '../data/sentences'
 import { flush } from '../utils/kana'
 import { useEnter } from '../utils/useEnter'
+import { furi } from '../utils/ruby'
 
 const props = defineProps({ lesson: Number, topic: { type: Number, default: null } })
 defineEmits(['back'])
@@ -19,7 +20,7 @@ const join = k => q.value.c.map(c => c[k]).join('')
 const fin = s => (s.endsWith('。') ? s : s + '。')
 const tile = i => {
   const [k, r] = q.value.c[i]
-  return k !== r ? `<ruby>${k}<rt>${r}</rt></ruby>` : k
+  return furi(k, r)
 }
 
 function next() {

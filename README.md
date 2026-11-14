@@ -42,6 +42,11 @@ src/
   utils/                      # conjugação, romaji → kana, perguntas, rubi (furigana)
 ```
 
+## Início
+
+A tela inicial (`src/components/HomePage.vue`) apresenta a proposta do app e explica cada menu. Para abri-la, clique em
+**文法ノート** no topo do menu lateral. Os números (lições e capítulos prontos) vêm dos dados, então se atualizam sozinhos.
+
 ## Livros
 
 O menu lateral tem um seletor de livros (**文法** e **漢字**):
@@ -55,6 +60,13 @@ Para desenvolver um capítulo de kanji, troque o `todo(...)` dele em `src/data/k
 `'山田《やまだ》さん=Sr(a). Yamada'`). Os exemplos de palavras são escritos para este app, não copiados do livro.
 
 Treinos de kanji (`KanjiDrill.vue`): kanji → leitura, ler palavras (digitando em romaji), kanji → significado e significado → kanji.
+
+## Treino misto (練習)
+
+O terceiro botão do menu lateral (**練習**) abre o treino misto: escolha um intervalo de lições (ex.: 1 a 5), os tipos de
+exercício (conjugar digitando, traduzir frase digitando, completar a lacuna) e a quantidade de questões. Ao final há o
+resultado por lição, a lista do que errou e o botão para refazer só os erros. O código está em `src/components/PracticeMix.vue`
+e usa os mesmos dados dos treinos por lição (`blanks.js`, `sentences.js`, `drillConfig.js`).
 
 ## Tópicos
 
