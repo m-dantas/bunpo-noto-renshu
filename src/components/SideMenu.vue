@@ -1,17 +1,20 @@
 <script setup>
-import { LESSONS, READY } from '../data/lessons'
-defineProps({ open: Boolean, current: Number })
-defineEmits(['select'])
+defineProps({ open: Boolean, current: Number, book: String, items: Array })
+defineEmits(['select', 'book'])
 </script>
 
 <template>
   <aside :class="{ open }">
-    <h2>Lições</h2>
+    <div class="seg" role="group" aria-label="Livro">
+      <button type="button" :class="{ on: book === 'bunpo' }" @click="$emit('book', 'bunpo')">文法</button>
+      <button type="button" :class="{ on: book === 'kanji' }" @click="$emit('book', 'kanji')">漢字</button>
+    </div>
+    <h2>{{ book === 'bunpo' ? 'Lições' : 'Capítulos' }}</h2>
     <ul id="lessons">
-      <li v-for="(l, i) in LESSONS" :key="i">
-        <button :disabled="!READY.includes(i + 1)" :class="{ on: current === i + 1 }" @click="$emit('select', i + 1)">
-          <span class="n">第{{ i + 1 }}課</span>{{ l.title }}
-          <small>{{ READY.includes(i + 1) ? l.pt : 'em breve' }}</small>
+      <li v-for="it in items" :key="it.key">
+        <button :disabled="!it.ready" :class="{ on: current === it.key }" @click="$emit('select', it.key)">
+          <span class="n">{{ it.label }}</span>{{ it.title }}
+          <small>{{ it.ready ? it.pt : 'em breve' }}</small>
         </button>
       </li>
     </ul>
