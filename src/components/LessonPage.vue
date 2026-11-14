@@ -13,8 +13,8 @@ const shown = computed(() => (isAll.value ? topics.value : [topics.value[props.t
 const goto = n => { emit('update:tab', n); window.scrollTo(0, 0) }
 
 const drillDesc = computed(() => {
-  if (isAll.value) return 'Conjugação e completar a lacuna, com todos os tópicos'
-  return CONF[props.lesson][props.tab].conj ? 'Só este tópico: conjugação e completar a lacuna' : 'Só este tópico: completar a lacuna'
+  if (isAll.value) return props.lesson > 2 ? 'Conjugação e completar a lacuna, com todos os tópicos' : 'Completar a lacuna, com todos os tópicos'
+  return CONF[props.lesson][props.tab].conj && props.lesson > 2 ? 'Só este tópico: conjugação e completar a lacuna' : 'Só este tópico: completar a lacuna'
 })
 const buildDesc = computed(() => 'Monte com blocos ou escreva em kana' + (isAll.value ? '' : ' · só este tópico'))
 </script>

@@ -5,3 +5,10 @@ export const CONF = {
   8: [{ blank: 1 }, { conj: 'v', blank: 1 }, { conj: 'a', blank: 1 }, { blank: 1 }],
   9: [{ conj: 'dict', blank: 1 }, { blank: 1 }, { conj: 'koto', blank: 1 }, { conj: 'te', blank: 1 }],
 }
+
+// Lições 1 a 5 (conj: 'masu' | 'i' | 'na' | 'past' | 'apast' | 'tai')
+CONF[1] = [{ blank: 1 }, { blank: 1 }, { blank: 1 }, { blank: 1 }]
+CONF[2] = [{ blank: 1 }, { blank: 1 }, { blank: 1 }, { blank: 1 }]
+CONF[3] = [{ blank: 1 }, { blank: 1 }, { conj: 'masu', blank: 1 }, { blank: 1 }]
+CONF[4] = [{ blank: 1 }, { conj: 'i', blank: 1 }, { conj: 'na', blank: 1 }, { blank: 1 }]
+CONF[5] = [{ conj: 'past', blank: 1 }, { blank: 1 }, { conj: 'apast', blank: 1 }, { conj: 'tai', blank: 1 }]

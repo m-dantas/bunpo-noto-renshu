@@ -15,3 +15,17 @@ export const ADJ=[
 ];
 
 export const VERBS9=[['泳ぐ','およぐ','u','nadar'],['読む','よむ','u','ler'],['聞く','きく','u','ouvir'],['歌う','うたう','u','cantar'],['走る','はしる','u','correr'],['作る','つくる','u','fazer, preparar'],['弾く','ひく','u','tocar (instrumento)'],['書く','かく','u','escrever'],['話す','はなす','u','falar'],['飲む','のむ','u','beber'],['食べる','たべる','ru','comer'],['見る','みる','ru','ver'],['寝る','ねる','ru','dormir'],['勉強する','べんきょうする','irr','estudar'],['運動する','うんどうする','irr','fazer exercício'],['来る','くる','irr','vir']];
+
+// ---------- Lições 3 a 5: verbos e adjetivos ----------
+export const VERBSB = [...VERBS9,
+  ['行く', 'いく', 'u', 'ir'], ['帰る', 'かえる', 'u', 'voltar'], ['会う', 'あう', 'u', 'encontrar'],
+  ['起きる', 'おきる', 'ru', 'acordar'], ['働く', 'はたらく', 'u', 'trabalhar'], ['買う', 'かう', 'u', 'comprar'],
+  ['する', 'する', 'irr', 'fazer'], ['休む', 'やすむ', 'u', 'descansar'], ['出かける', 'でかける', 'ru', 'sair']]
+export const ADJB = [
+  ['高い', 'たかい', 'i', 'alto, caro'], ['安い', 'やすい', 'i', 'barato'], ['大きい', 'おおきい', 'i', 'grande'],
+  ['小さい', 'ちいさい', 'i', 'pequeno'], ['新しい', 'あたらしい', 'i', 'novo'], ['おいしい', 'おいしい', 'i', 'gostoso'],
+  ['暑い', 'あつい', 'i', 'quente (clima)'], ['寒い', 'さむい', 'i', 'frio (clima)'], ['近い', 'ちかい', 'i', 'perto'],
+  ['遠い', 'とおい', 'i', 'longe'], ['多い', 'おおい', 'i', 'muito(s)'], ['いい', 'いい', 'i', 'bom'],
+  ['静か', 'しずか', 'na', 'tranquilo'], ['きれい', 'きれい', 'na', 'bonito, limpo'], ['有名', 'ゆうめい', 'na', 'famoso'],
+  ['便利', 'べんり', 'na', 'prático'], ['元気', 'げんき', 'na', 'saudável'], ['親切', 'しんせつ', 'na', 'atencioso'],
+  ['にぎやか', 'にぎやか', 'na', 'animado']]

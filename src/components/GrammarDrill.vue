@@ -21,16 +21,19 @@ const ADJ = [['i', 'イA → くて'], ['na', 'ナA → で'], ['n', 'N → で'
 // O que este treino mistura: conjugação (conf.conj) e/ou completar a lacuna
 const conf = props.topic == null ? { conj: true, blank: 1 } : CONF[props.lesson][props.topic]
 const only = typeof conf.conj === 'string' ? conf.conj : null
-const hasConj = !!conf.conj
+const hasConj = !!conf.conj && props.lesson > 2 // lições 1 e 2 só têm lacunas
 const blanks = BLANKS[props.lesson].filter(b => props.topic == null || b[0] === props.topic)
-const showVerb = hasConj && !(props.lesson === 8 && only === 'a')
+const advanced = props.lesson === 8 || props.lesson === 9
+const showVerb = advanced && hasConj && !(props.lesson === 8 && only === 'a')
 const showForms = showVerb && !(props.lesson === 9 && only)
 const showAdj = hasConj && props.lesson === 8 && only !== 'v'
 
 const opts = reactive(
   props.lesson === 9
     ? { groups: ['u', 'ru', 'irr'], forms: only ? [only] : ['dict', 'koto'] }
-    : { groups: ['u', 'ru', 'irr'], forms: ['pol'], adj: ['i', 'na', 'n'] }
+    : props.lesson === 8
+      ? { groups: ['u', 'ru', 'irr'], forms: ['pol'], adj: ['i', 'na', 'n'] }
+      : {}
 )
 const q = ref(null), answer = ref(''), picked = ref(''), answered = ref(false), good = ref(false)
 const streak = ref(0), ok = ref(0), total = ref(0), max = ref(0)

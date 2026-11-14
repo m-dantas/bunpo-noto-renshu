@@ -46,7 +46,7 @@ src/
 
 O menu lateral tem um seletor de livros (**文法** e **漢字**):
 
-- **わたしの文法ノート** (gramática): lições 8 e 9 prontas, com tópicos, lacunas e criação de frases.
+- **わたしの文法ノート** (gramática): lições 1 a 5, 8 e 9 prontas, com tópicos, lacunas e criação de frases.
 - **漢字 hop! step! jump! 初級I** (kanji): capítulos 0 a 9 do sumário do livro. Por enquanto só o **capítulo 0** está
   desenvolvido (26 kanji em 3 seções); os demais já têm a lista de kanji em `src/data/kanji.js` e aparecem desativados.
 
@@ -68,7 +68,7 @@ Cada lição tem 4 tópicos (abas na página da lição). Ao escolher um tópico
 
 1. `src/data/lessons.js`: acrescente o número em `READY`.
 2. `src/data/grammar.js`: crie `G10` (mesmo formato de `G8`) e registre em `GRAMMAR`.
-3. `src/data/sentences.js`, `blanks.js` e `drillConfig.js`: frases (`c` = blocos `[kanji, leitura]`), lacunas e configuração por tópico.
+3. `src/data/sentences.js` (registre em `SENTENCES`), `blanks.js` e `drillConfig.js`: frases (`c` = blocos `[kanji, leitura]`), lacunas e configuração por tópico.
 4. `src/utils/questions.js`: se a lição tiver um treino de conjugação próprio, crie `make10` e
    ligue em `makeQuestion` (e as opções em `GrammarDrill.vue`).
 
