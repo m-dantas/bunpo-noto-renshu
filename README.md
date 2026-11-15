@@ -51,7 +51,7 @@ A tela inicial (`src/components/HomePage.vue`) apresenta a proposta do app e exp
 
 O menu lateral tem um seletor de livros (**文法** e **漢字**):
 
-- **わたしの文法ノート** (gramática): lições 1 a 9 prontas, com tópicos, lacunas e criação de frases.
+- **わたしの文法ノート** (gramática): lições 1 a 15 prontas, com tópicos, lacunas e criação de frases.
 - **漢字 hop! step! jump! 初級I** (kanji): capítulos 0 a 9 do sumário do livro. Por enquanto só o **capítulo 0** está
   desenvolvido (26 kanji em 3 seções); os demais já têm a lista de kanji em `src/data/kanji.js` e aparecem desativados.
 

@@ -1,5 +1,5 @@
 import { VERBS, ADJ, VERBS9, VERBSB, ADJB } from '../data/drill'
-import { te, TE, SUF, FORM, ruleV, IROW, masu } from './conjugation'
+import { te, TE, SUF, FORM, ruleV, IROW, masu, nai, ta, ARow } from './conjugation'
 
 const pick = a => a[Math.floor(Math.random() * a.length)]
 
@@ -37,9 +37,11 @@ function make9({ groups, forms }) {
 }
 
 // ---------- Lições 3 a 5 ----------
-const DEFAULT = { 3: ['masu'], 4: ['i', 'na'], 5: ['past', 'apast', 'tai'], 6: ['invite'], 7: ['te', 'kata', 'teiru'] }
+const DEFAULT = { 3: ['masu'], 4: ['i', 'na'], 5: ['past', 'apast', 'tai'], 6: ['invite'], 7: ['te', 'kata', 'teiru'],
+  10: ['tekuru', 'perm', 'naru'], 11: ['tari', 'plain'], 12: ['houga', 'kara', 'mae'], 13: ['koto'], 14: ['must', 'nakute'], 15: ['souda', 'cond'] }
 function makeBasic(lesson, only) {
   const kind = only || pick(DEFAULT[lesson])
+  if (KIND_FORMS[kind]) return makeVerbF(kind)
   return ['masu', 'past', 'tai', 'invite', 'te', 'teiru', 'kata'].includes(kind) ? makeVerb(kind) : makeAdj(kind)
 }
 
@@ -68,6 +70,15 @@ function makeVerb(kind) {
 
 // adjetivo → negativo (lição 4) ou passado / passado negativo (lição 5)
 function makeAdj(kind) {
+  if (kind === 'naru') { // lição 10: イA → くなります / ナA → になります
+    const t = pick(['i', 'na'])
+    const [k, r, , pt] = pick(ADJB.filter(a => a[2] === t))
+    if (t === 'i') {
+      const mk = x => (x === 'いい' ? 'よ' : x.slice(0, -1)) + 'くなります'
+      return { k, r, pt, tag: ['〜くなります', 'い-adjetivo · ficar'], ans: [mk(k), mk(r)], rule: 'Tire い e coloque くなります' + (k === 'いい' ? ' (いい → よ〜)' : '') }
+    }
+    return { k, r, pt, tag: ['〜になります', 'な-adjetivo · ficar'], ans: [k + 'になります', r + 'になります'], rule: 'な-adjetivo: acrescente になります' }
+  }
   const t = kind === 'i' ? 'i' : kind === 'na' ? 'na' : pick(['i', 'na'])
   const [k, r, , pt] = pick(ADJB.filter(a => a[2] === t))
   const f = kind === 'apast' ? pick(['past', 'pastneg']) : 'neg'
@@ -82,4 +93,44 @@ function makeAdj(kind) {
   const SUF = { neg: ['じゃないです', 'ではありません'], past: ['でした'], pastneg: ['じゃありませんでした', 'ではありませんでした'] }[f]
   return { k, r, pt, tag: ['〜' + SUF[0], `${adj}-adjetivo · ${label}`], ans: [k + SUF[0], r + SUF[0], ...SUF.slice(1).flatMap(s => [k + s, r + s])],
     rule: `な-adjetivo: acrescente ${SUF[0]}` }
+}
+
+// ---------- Lições 10 a 15: formas com て, ない e た ----------
+// [rótulo, descrição, construção, base]  (base: te | nai | ta | dict)
+const FV = {
+  tekuru: ['Vてきます', 'ir fazer e voltar', (x, g) => te(x, g) + 'きます', 'te'],
+  temo: ['Vてもいいですか', 'pedir permissão', (x, g) => te(x, g) + 'もいいですか', 'te'],
+  naide: ['Vないでください', 'pedir para não fazer', (x, g) => nai(x, g) + 'でください', 'nai'],
+  tari: ['Vたり', 'listar atividades', (x, g) => ta(x, g) + 'り', 'ta'],
+  nai: ['Vない', 'forma simples negativa', (x, g) => nai(x, g), 'nai'],
+  ta: ['Vた', 'forma simples passada', (x, g) => ta(x, g), 'ta'],
+  nakatta: ['Vなかった', 'forma simples passada negativa', (x, g) => nai(x, g).slice(0, -1) + 'かった', 'nai'],
+  houga: ['Vたほうがいいです', 'conselho', (x, g) => ta(x, g) + 'ほうがいいです', 'ta'],
+  naihouga: ['Vないほうがいいです', 'conselho (não fazer)', (x, g) => nai(x, g) + 'ほうがいいです', 'nai'],
+  kara: ['Vてから', 'depois de', (x, g) => te(x, g) + 'から', 'te'],
+  mae: ['Vる前に', 'antes de', null, 'dict'],
+  koto: ['Vたことがあります', 'experiência', (x, g) => ta(x, g) + 'ことがあります', 'ta'],
+  must: ['Vなければなりません', 'obrigação', (x, g) => nai(x, g).slice(0, -1) + 'ければなりません', 'nai'],
+  teha: ['Vてはいけません', 'proibição', (x, g) => te(x, g) + 'はいけません', 'te'],
+  nakute: ['Vなくてもいいです', 'não precisa', (x, g) => nai(x, g).slice(0, -1) + 'くてもいいです', 'nai'],
+  souda: ['Vたそうです', 'ouvi dizer (passado)', (x, g) => ta(x, g) + 'そうです', 'ta'],
+  tara: ['Vたら', 'se / quando', (x, g) => ta(x, g) + 'ら', 'ta'],
+  temo2: ['Vても', 'mesmo que', (x, g) => te(x, g) + 'も', 'te'],
+}
+const KIND_FORMS = { tekuru: ['tekuru'], perm: ['temo', 'naide'], tari: ['tari'], plain: ['nai', 'ta', 'nakatta'],
+  houga: ['houga', 'naihouga'], kara: ['kara'], mae: ['mae'], koto: ['koto'], must: ['must', 'teha'], nakute: ['nakute'],
+  souda: ['souda'], cond: ['tara', 'temo2'] }
+
+function makeVerbF(kind) {
+  const f = pick(KIND_FORMS[kind])
+  const [t1, t2, fn, base] = FV[f]
+  const [k, r, g, pt] = pick(VERBSB)
+  const e = k.slice(-1)
+  const teR = g === 'u' ? (k.endsWith('行く') ? 'Exceção: 行く → 行って' : `Grupo う: ${e} → ${TE[e]}`) : g === 'ru' ? 'Grupo る: tire る e coloque て' : 'Irregular: して, 来て'
+  const naiR = g === 'u' ? `Grupo う: ${e} → ${ARow[e]}ない` : g === 'ru' ? 'Grupo る: tire る e coloque ない' : 'Irregular: しない, 来ない (こない)'
+  const rule = { te: teR, ta: `${teR}; て → た, で → だ`, nai: naiR, dict: 'Forma do dicionário + 前に' }[base]
+  if (f === 'mae') { // o exercício mostra a forma ます e pede o dicionário + 前に
+    return { k: masu(k, g), r: masu(r, g), pt, tag: [t1, t2], ans: [k + '前に', r + 'まえに', k + 'まえに'], rule }
+  }
+  return { k, r, pt, tag: [t1, t2], ans: [fn(k, g), fn(r, g)], rule: `${rule} → ${t1}` }
 }

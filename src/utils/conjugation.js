@@ -15,3 +15,12 @@ export const $=id=>document.getElementById(id);
 
 export const IROW={う:'い',く:'き',ぐ:'ぎ',す:'し',つ:'ち',ぬ:'に',ぶ:'び',む:'み',る:'り'};
 export const masu=(w,g)=>g==='irr'?(w.endsWith('する')?w.slice(0,-2)+'します':w==='来る'?'来ます':'きます'):g==='ru'?w.slice(0,-1)+'ます':w.slice(0,-1)+IROW[w.slice(-1)]+'ます';
+
+// ---------- lições 10 a 15: formas ない e た ----------
+export const ARow={う:"わ",く:"か",ぐ:"が",す:"さ",つ:"た",ぬ:"な",ぶ:"ば",む:"ま",る:"ら"};
+export function nai(w,g){
+  if(g==="irr"){ if(w.endsWith("する")) return w.slice(0,-2)+"しない"; return w==="来る"?"来ない":"こない"; }
+  if(g==="ru") return w.slice(0,-1)+"ない";
+  return w.slice(0,-1)+ARow[w.slice(-1)]+"ない";
+}
+export function ta(w,g){ return te(w,g).replace(/て$/,"た").replace(/で$/,"だ"); }
