@@ -114,6 +114,7 @@ next()
       <div class="fb" aria-live="polite">
         <template v-if="answered">
           <div class="big" :class="good ? 'ok' : 'bad'">{{ good ? 'Correto!' : q.type === 'type' ? 'Quase. Resposta: ' + q.ans[0] : 'Quase.' }}</div>
+          <div v-if="!good && q.type === 'type'" class="rule">Você escreveu: {{ answer }}</div>
           <div class="rule">{{ q.e.k }} · {{ q.e.m }}<template v-if="q.e.kun.length"> · kun: {{ q.e.kun.join('・') }}</template><template v-if="q.e.on.length"> · on: {{ q.e.on.join('・') }}</template></div>
         </template>
       </div>

@@ -3,6 +3,7 @@ import { ref, nextTick } from 'vue'
 import KanaInput from './KanaInput.vue'
 import { SENTENCES } from '../data/sentences'
 import { flush } from '../utils/kana'
+import { matchChunks } from '../utils/answer'
 import { useEnter } from '../utils/useEnter'
 import { furi } from '../utils/ruby'
 
@@ -51,7 +52,7 @@ function check() {
     const cl = s => s.replace(/[\s。、]/g, '')
     const v = cl(flush(typed.value).normalize('NFKC'))
     if (!v) return
-    good.value = v === cl(join(0)) || v === cl(join(1))
+    good.value = matchChunks(typed.value, q.value.c)
   } else {
     if (picked.value.length < q.value.c.length) return
     good.value = picked.value.every((x, i) => x === i)
@@ -99,6 +100,7 @@ next()
       <div class="fb" aria-live="polite">
         <template v-if="answered">
           <div class="big" :class="good ? 'ok' : 'bad'">{{ good ? 'Correto!' : 'Quase. Esta é a ordem certa:' }}</div>
+          <div v-if="!good && typing" class="rule">Você escreveu: {{ typed }}</div>
           <div>{{ fin(join(0)) }}</div>
           <div class="rule">{{ fin(join(1)) }} · {{ q.n }}</div>
         </template>

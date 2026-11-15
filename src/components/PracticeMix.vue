@@ -7,6 +7,7 @@ import { BLANKS } from '../data/blanks'
 import { SENTENCES } from '../data/sentences'
 import { makeQuestion } from '../utils/questions'
 import { flush } from '../utils/kana'
+import { matchChunks } from '../utils/answer'
 import { rb, furi } from '../utils/ruby'
 import { useEnter } from '../utils/useEnter'
 
@@ -104,7 +105,7 @@ function check() {
   const v = flush(answer.value).normalize('NFKC')
   if (!cl(v)) return
   if (x.kind === 'conj') finish(x.ans.includes(v.replace(/\s/g, '')))
-  else finish(cl(v) === cl(joinC(x, 0)) || cl(v) === cl(joinC(x, 1)))
+  else finish(matchChunks(v, x.s.c))
 }
 function choose(o) {
   if (answered.value) return
@@ -195,6 +196,7 @@ function fix(which) {
       <div class="fb" aria-live="polite">
         <template v-if="answered">
           <div class="big" :class="good ? 'ok' : 'bad'">{{ good ? 'Correto!' : 'Quase.' }}</div>
+          <div v-if="!good && q.kind !== 'blank'" class="rule">Você escreveu: {{ answer }}</div>
           <template v-if="q.kind === 'conj'"><div>Resposta: {{ q.ans[0] }}<template v-if="q.ans[0] !== q.ans[1]"> ({{ q.ans[1] }})</template></div><div class="rule">{{ q.rule }}</div></template>
           <template v-else-if="q.kind === 'sent'"><div style="font-size: 1.4rem" v-html="sentHtml(q)"></div><div class="rule">{{ fin(joinC(q, 1)) }} · {{ q.s.n }}</div></template>
           <div v-else class="rule">{{ q.why }}</div>

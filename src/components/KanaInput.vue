@@ -6,6 +6,7 @@ defineProps({ modelValue: String, disabled: Boolean })
 const emit = defineEmits(['update:modelValue'])
 const el = ref(null)
 const kata = ref(false)
+let nn = false // acabou de digitar “nn” (→ ん): se vier vogal, ela forma a sílaba com n (donna → どんな)
 const caps = e => !!(e.getModifierState && e.getModifierState('CapsLock'))
 
 function set(v) {
@@ -24,7 +25,15 @@ function onKeydown(e) {
     e.preventDefault()
     const v = i.value
     const m = v.match(/[a-z]*$/)[0]
-    let out = toKana(m + e.key.toLowerCase())
+    const key = e.key.toLowerCase()
+    if (nn && /[aiueoy]/.test(key) && v.endsWith('ん')) {
+      nn = false
+      const syl = toKana('n' + key)
+      set(v + (kata.value ? kt(syl) : syl))
+      return
+    }
+    nn = m === 'n' && key === 'n'
+    let out = toKana(m + key)
     if (kata.value) out = kt(out)
     set(v.slice(0, v.length - m.length) + out)
   } else if (e.key === '-') {
