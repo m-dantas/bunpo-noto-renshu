@@ -16,7 +16,7 @@ import { KCHAPTERS } from './data/kanji'
 const book = ref('home') // home | bunpo | kanji | mix
 const view = ref('home') // home | menu | drill | build | kdrill
 const cur = ref(null) // lição (bunpo) ou capítulo (kanji)
-const tab = ref(0) // tópico/seção (0..n) ou 'all'
+const tab = ref(0) // parte/seção (0..n) ou 'all'
 const kmode = ref('reading')
 const open = ref(false) // gaveta do menu (celular)
 const mem = {} // onde você estava em cada livro (ao trocar de livro, volta para lá)
@@ -90,7 +90,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   <SideMenu :open="open" :current="cur" :book="book" :items="items" @select="select" @book="setBook" @close="open = false" />
   <div class="wrap">
     <div class="topics-col">
-      <TopicNav v-if="view === 'menu' && labels.length > 1 && book !== 'home' && book !== 'mix'" v-model:tab="tab" :labels="labels" :title="book === 'bunpo' ? 'Tópicos' : 'Seções'" />
+      <TopicNav v-if="view === 'menu' && labels.length > 1 && book !== 'home' && book !== 'mix'" v-model:tab="tab" :labels="labels" :title="book === 'bunpo' ? 'Partes' : 'Seções'" />
     </div>
     <main>
       <h1>{{ heading }}</h1>

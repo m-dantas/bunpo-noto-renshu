@@ -23,10 +23,10 @@ const nChapters = KCHAPTERS.filter(c => c.ready).length
     <article class="topic">
       <h2>文法 · Gramática</h2>
       <p>Lições do caderno de gramática. Hoje estão prontas <b>{{ nLessons }} de {{ LESSONS.length }}</b> (lições {{ readyList }}); as outras aparecem em cinza, como “em breve”.</p>
-      <p>Cada lição tem <b>4 tópicos</b>. Escolha um tópico na coluna ao lado (ou nas abas, em telas estreitas) para ler o <b>resumo de gramática</b>, com o padrão da frase, uma explicação curta e exemplos com furigana e tradução. No fim da página há a <b>Hora de praticar</b>:</p>
-      <p><span class="pat">Treinar a gramática</span> conjugação (nos tópicos em que faz sentido) e completar a lacuna.</p>
+      <p>Cada lição tem <b>3 partes</b>, como no livro. Escolha uma parte na coluna ao lado (ou nas abas, em telas estreitas) para ler o <b>resumo de gramática</b>, com o padrão da frase, uma explicação curta e exemplos com furigana e tradução. No fim da página há a <b>Hora de praticar</b>:</p>
+      <p><span class="pat">Treinar a gramática</span> conjugação (nas partes em que faz sentido) e completar a lacuna.</p>
       <p><span class="pat">Criar frases</span> montar a frase com blocos ou escrevê-la em kana, vendo as palavras como dica.</p>
-      <p>O treino vale só para o tópico aberto. Em <b>Tudo</b>, ele mistura a lição inteira.</p>
+      <p>O treino vale só para a parte aberta. Em <b>Tudo</b>, ele mistura a lição inteira.</p>
       <button @click="$emit('open', 'bunpo')">Abrir a gramática</button>
     </article>
 
@@ -58,7 +58,7 @@ const nChapters = KCHAPTERS.filter(c => c.ready).length
 
     <h2 class="go">Dicas de uso</h2>
     <article class="topic">
-      <p><b>Passo a passo:</b> leia o resumo do tópico, pratique só ele e, depois, use <b>Tudo</b> e o treino misto para juntar o que aprendeu.</p>
+      <p><b>Passo a passo:</b> leia o resumo da parte, pratique só ela e, depois, use <b>Tudo</b> e o treino misto para juntar o que aprendeu.</p>
       <p><b>Furigana:</b> fica sempre em cima dos kanji e pode ser desligado nos treinos, para você testar a leitura.</p>
       <p><b>Offline:</b> o app é uma PWA. Depois do primeiro acesso, ele funciona sem internet e pode ser instalado pelo navegador (“Instalar app” ou “Adicionar à tela inicial”).</p>
       <p><b>Seu progresso:</b> o recorde de sequência fica guardado no aparelho em que você estuda.</p>

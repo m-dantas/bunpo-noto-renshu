@@ -40,7 +40,7 @@ function make9({ groups, forms }) {
 const DEFAULT = { 3: ['masu'], 4: ['i', 'na'], 5: ['past', 'apast', 'tai'], 6: ['invite'], 7: ['te', 'kata', 'teiru'],
   10: ['tekuru', 'perm', 'naru'], 11: ['tari', 'plain'], 12: ['houga', 'kara', 'mae'], 13: ['koto'], 14: ['must', 'nakute'], 15: ['souda', 'cond'] }
 function makeBasic(lesson, only) {
-  const kind = only || pick(DEFAULT[lesson])
+  const kind = Array.isArray(only) ? pick(only) : only || pick(DEFAULT[lesson])
   if (KIND_FORMS[kind]) return makeVerbF(kind)
   return ['masu', 'past', 'tai', 'invite', 'te', 'teiru', 'kata'].includes(kind) ? makeVerb(kind) : makeAdj(kind)
 }

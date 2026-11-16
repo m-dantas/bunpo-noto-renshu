@@ -1,5 +1,5 @@
 <script setup>
-defineProps({ labels: Array, tab: [Number, String], title: { type: String, default: 'Tópicos' } })
+defineProps({ labels: Array, tab: [Number, String], title: { type: String, default: 'Partes' } })
 const emit = defineEmits(['update:tab'])
 const pick = n => { emit('update:tab', n); window.scrollTo(0, 0) }
 </script>

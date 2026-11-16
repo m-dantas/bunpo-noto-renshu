@@ -57,7 +57,7 @@ A tela inicial (`src/components/HomePage.vue`) apresenta a proposta do app e exp
 
 O menu lateral tem um seletor de livros (**文法** e **漢字**):
 
-- **わたしの文法ノート** (gramática): lições 1 a 15 prontas, com tópicos, lacunas e criação de frases.
+- **わたしの文法ノート** (gramática): lições 1 a 15 prontas, com 3 partes, lacunas e criação de frases.
 - **漢字 hop! step! jump! 初級I** (kanji): capítulos 0 a 9 do sumário do livro. Por enquanto só o **capítulo 0** está
   desenvolvido (26 kanji em 3 seções); os demais já têm a lista de kanji em `src/data/kanji.js` e aparecem desativados.
 
@@ -74,19 +74,19 @@ exercício (conjugar digitando, traduzir frase digitando, completar a lacuna) e 
 resultado por lição, a lista do que errou e o botão para refazer só os erros. O código está em `src/components/PracticeMix.vue`
 e usa os mesmos dados dos treinos por lição (`blanks.js`, `sentences.js`, `drillConfig.js`).
 
-## Tópicos
+## Partes de cada lição
 
-Cada lição tem 4 tópicos (abas na página da lição). Ao escolher um tópico, os dois treinos praticam só ele:
+Cada lição tem **3 partes**, como no livro (abas na página da lição). Ao escolher uma parte, os dois treinos praticam só ela. Os nomes das partes são um agrupamento próprio do app (ver `src/data/grammar.js`):
 
-- `src/data/sentences.js`: cada frase tem `t` (índice do tópico, de 0 a 3).
-- `src/data/blanks.js`: exercícios de completar a lacuna, `[tópico, frase com ＿, alternativas, resposta, tradução, explicação]`.
-- `src/data/drillConfig.js`: o que cada tópico mistura em "Treinar a gramática" (conjugação e/ou lacuna).
+- `src/data/sentences.js`: cada frase tem `t` (índice da parte, de 0 a 2).
+- `src/data/blanks.js`: exercícios de completar a lacuna, `[parte, frase com ＿, alternativas, resposta, tradução, explicação]`.
+- `src/data/drillConfig.js`: o que cada parte mistura em "Treinar a gramática" (conjugação e/ou lacuna; `conj` pode ser um texto ou uma lista de tipos).
 
 ## Adicionar uma nova lição
 
 1. `src/data/lessons.js`: acrescente o número em `READY`.
-2. `src/data/grammar.js`: crie `G10` (mesmo formato de `G8`) e registre em `GRAMMAR`.
-3. `src/data/sentences.js` (registre em `SENTENCES`), `blanks.js` e `drillConfig.js`: frases (`c` = blocos `[kanji, leitura]`), lacunas e configuração por tópico.
+2. `src/data/grammar.js`: acrescente a lição em `GRAMMAR_ALL` com 3 partes.
+3. `src/data/sentences.js` (registre em `SENTENCES`), `blanks.js` e `drillConfig.js`: frases (`c` = blocos `[kanji, leitura]`), lacunas e configuração por parte.
 4. `src/utils/questions.js`: se a lição tiver um treino de conjugação próprio, crie `make10` e
    ligue em `makeQuestion` (e as opções em `GrammarDrill.vue`).
 

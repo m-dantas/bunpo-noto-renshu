@@ -13,10 +13,10 @@ const shown = computed(() => (isAll.value ? topics.value : [topics.value[props.t
 const goto = n => { emit('update:tab', n); window.scrollTo(0, 0) }
 
 const drillDesc = computed(() => {
-  if (isAll.value) return props.lesson > 2 ? 'Conjugação e completar a lacuna, com todos os tópicos' : 'Completar a lacuna, com todos os tópicos'
-  return CONF[props.lesson][props.tab].conj && props.lesson > 2 ? 'Só este tópico: conjugação e completar a lacuna' : 'Só este tópico: completar a lacuna'
+  if (isAll.value) return props.lesson > 2 ? 'Conjugação e completar a lacuna, com as 3 partes' : 'Completar a lacuna, com as 3 partes'
+  return CONF[props.lesson][props.tab].conj && props.lesson > 2 ? 'Só esta parte: conjugação e completar a lacuna' : 'Só esta parte: completar a lacuna'
 })
-const buildDesc = computed(() => 'Monte com blocos ou escreva em kana' + (isAll.value ? '' : ' · só este tópico'))
+const buildDesc = computed(() => 'Monte com blocos ou escreva em kana' + (isAll.value ? '' : ' · só esta parte'))
 </script>
 
 <template>
@@ -41,11 +41,11 @@ const buildDesc = computed(() => 'Monte com blocos ou escreva em kana' + (isAll.
     </article>
 
     <div v-if="!isAll" class="pager">
-      <button v-if="tab > 0" class="back" @click="goto(tab - 1)">← Tópico anterior</button><span v-else></span>
-      <button v-if="tab < topics.length - 1" class="back" @click="goto(tab + 1)">Próximo tópico →</button>
+      <button v-if="tab > 0" class="back" @click="goto(tab - 1)">← Parte anterior</button><span v-else></span>
+      <button v-if="tab < topics.length - 1" class="back" @click="goto(tab + 1)">Próxima parte →</button>
     </div>
 
-    <h2 class="go">{{ isAll ? 'Hora de praticar (lição toda)' : `Hora de praticar (tópico ${tab + 1})` }}</h2>
+    <h2 class="go">{{ isAll ? 'Hora de praticar (lição toda)' : `Hora de praticar (parte ${tab + 1})` }}</h2>
     <button class="choice" @click="$emit('go', 'drill')"><b>Treinar a gramática</b><span>{{ drillDesc }}</span></button>
     <button class="choice" @click="$emit('go', 'build')"><b>Criar frases</b><span>{{ buildDesc }}</span></button>
   </section>

@@ -20,7 +20,7 @@ const ADJ = [['i', 'イA → くて'], ['na', 'ナA → で'], ['n', 'N → で'
 
 // O que este treino mistura: conjugação (conf.conj) e/ou completar a lacuna
 const conf = props.topic == null ? { conj: true, blank: 1 } : CONF[props.lesson][props.topic]
-const only = typeof conf.conj === 'string' ? conf.conj : null
+const only = typeof conf.conj === 'string' || Array.isArray(conf.conj) ? conf.conj : null // texto ou lista de tipos
 const hasConj = !!conf.conj && props.lesson > 2 // lições 1 e 2 só têm lacunas
 const blanks = BLANKS[props.lesson].filter(b => props.topic == null || b[0] === props.topic)
 const advanced = props.lesson === 8 || props.lesson === 9

@@ -37,12 +37,12 @@ const OPTS = {
   9: () => ({ groups: ['u', 'ru', 'irr'], forms: ['dict', 'koto', 'te'] }),
 }
 function genConj(L) {
-  const tp = (CONF[L] || []).filter(c => typeof c.conj === 'string')
+  const tp = (CONF[L] || []).flatMap(c => (c.conj ? [].concat(c.conj) : []))
   if (L < 3 || !tp.length) return null
-  const c = pick(tp)
+  const kind = pick(tp)
   const o = OPTS[L] ? OPTS[L]() : {}
-  if (L === 9) o.forms = [c.conj]
-  return { kind: 'conj', L, ...makeQuestion(L, o, c.conj) }
+  if (L === 9) o.forms = [kind]
+  return { kind: 'conj', L, ...makeQuestion(L, o, kind) }
 }
 const genSent = L => { const s = pick(SENTENCES[L]); return { kind: 'sent', L, s, hint: shuffle(s.c) } }
 const genBlank = L => { const b = pick(BLANKS[L]); return { kind: 'blank', L, raw: b[1], opts: shuffle(b[2]), a: b[3], pt: b[4], why: b[5] } }
