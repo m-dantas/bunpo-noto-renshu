@@ -26,6 +26,8 @@ const nChapters = KCHAPTERS.filter(c => c.ready).length
       <p>Cada lição tem <b>3 partes</b>, como no livro. Escolha uma parte na coluna ao lado (ou nas abas, em telas estreitas) para ler o <b>resumo de gramática</b>, com o padrão da frase, uma explicação curta e exemplos com furigana e tradução. No fim da página há a <b>Hora de praticar</b>:</p>
       <p><span class="pat">Treinar a gramática</span> conjugação (nas partes em que faz sentido) e completar a lacuna.</p>
       <p><span class="pat">Criar frases</span> montar a frase com blocos ou escrevê-la em kana, vendo as palavras como dica.</p>
+      <p><span class="pat">Palavras-chave → frase</span> como no caderno de exercícios: dadas as palavras (ex.: 私・大阪・住む), escreva a frase completa.</p>
+      <p><span class="pat">Números e contadores</span> idade, datas, horas, preços, andares, 枚, 人, 回… (nas lições 1 a 4, 6, 8 e 9).</p>
       <p>O treino vale só para a parte aberta. Em <b>Tudo</b>, ele mistura a lição inteira.</p>
       <button @click="$emit('open', 'bunpo')">Abrir a gramática</button>
     </article>

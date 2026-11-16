@@ -5,6 +5,8 @@ import { READY } from '../data/lessons'
 import { CONF } from '../data/drillConfig'
 import { BLANKS } from '../data/blanks'
 import { SENTENCES } from '../data/sentences'
+import { CUES } from '../data/cues'
+import { makeNum, hasNum } from '../utils/numbers'
 import { makeQuestion } from '../utils/questions'
 import { flush } from '../utils/kana'
 import { matchChunks } from '../utils/answer'
@@ -12,7 +14,7 @@ import { rb, furi } from '../utils/ruby'
 import { useEnter } from '../utils/useEnter'
 
 const lessons = READY
-const TYPES = [['conj', 'Conjugar (digitar)'], ['sent', 'Traduzir frase (digitar)'], ['blank', 'Completar a lacuna (escolher)']]
+const TYPES = [['conj', 'Conjugar (digitar)'], ['sent', 'Traduzir frase (digitar)'], ['blank', 'Completar a lacuna (escolher)'], ['cue', 'Palavras-chave → frase (digitar)'], ['num', 'Números e contadores (digitar)']]
 const cfg = reactive({ from: lessons[0], to: Math.min(5, lessons[lessons.length - 1]), types: ['conj', 'sent'], count: 10, hints: true, furi: true })
 
 const stage = ref('setup') // setup | run | done
@@ -45,14 +47,20 @@ function genConj(L) {
   return { kind: 'conj', L, ...makeQuestion(L, o, kind) }
 }
 const genSent = L => { const s = pick(SENTENCES[L]); return { kind: 'sent', L, s, hint: shuffle(s.c) } }
+const genNum = L => (hasNum(L) ? { kind: 'num', L, ...makeNum(L) } : null)
+const genCue = L => {
+  const c = pick(CUES[L] || [])
+  return c ? { kind: 'cue', L, cue: c.cue, s: { c: c.c, pt: c.pt, n: 'Palavras-chave' } } : null
+}
+const hira = s => s.replace(/[\u30a1-\u30f6]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60))
 const genBlank = L => { const b = pick(BLANKS[L]); return { kind: 'blank', L, raw: b[1], opts: shuffle(b[2]), a: b[3], pt: b[4], why: b[5] } }
-const keyOf = q => q.kind + q.L + (q.k ? q.k + q.tag[0] : q.s ? q.s.pt : q.raw)
+const keyOf = q => q.kind + q.L + (q.k ? q.k + q.tag[0] : q.kind === 'num' ? q.big : q.s ? q.s.pt : q.raw)
 
 function build() {
   const Ls = inRange(), out = [], seen = new Set()
   for (let guard = 0; out.length < cfg.count && guard < 600; guard++) {
     const kind = pick(cfg.types), L = pick(Ls)
-    const q = kind === 'conj' ? genConj(L) : kind === 'sent' ? genSent(L) : genBlank(L)
+    const q = kind === 'conj' ? genConj(L) : kind === 'sent' ? genSent(L) : kind === 'cue' ? genCue(L) : kind === 'num' ? genNum(L) : genBlank(L)
     if (!q) continue
     const k = keyOf(q)
     if (seen.has(k) && guard < 300) continue // evita repetir enquanto houver variedade
@@ -71,12 +79,12 @@ const byLesson = computed(() => {
   results.value.forEach(r => { (m[r.q.L] ||= { ok: 0, n: 0 }).n++; if (r.good) m[r.q.L].ok++ })
   return Object.entries(m).map(([L, v]) => ({ L, ...v }))
 })
-const tags = x => (x.kind === 'conj' ? x.tag : x.kind === 'sent' ? (cfg.hints ? ['Traduza para o japonês', x.s.n] : ['Traduza para o japonês']) : ['Completar a lacuna'])
+const tags = x => (x.kind === 'conj' ? x.tag : x.kind === 'num' ? ['Números e contadores', x.label] : x.kind === 'cue' ? ['Palavras-chave → frase'] : x.kind === 'sent' ? (cfg.hints ? ['Traduza para o japonês', x.s.n] : ['Traduza para o japonês']) : ['Completar a lacuna'])
 const blankHtml = computed(() =>
   q.value && q.value.kind === 'blank'
     ? rbx(q.value.raw.replace('＿', answered.value ? `<b class="ok">${q.value.a}</b>` : '<span class="blank"></span>'))
     : '')
-const missHtml = x => (x.kind === 'conj' ? `${kanjiHtml(x.k, x.r)} → ${x.ans[0]}` : x.kind === 'sent' ? `${x.s.pt} → ${sentHtml(x)}` : rbx(x.raw.replace('＿', x.a)))
+const missHtml = x => (x.kind === 'conj' ? `${kanjiHtml(x.k, x.r)} → ${x.ans[0]}` : x.kind === 'num' ? `${x.big} → ${x.ans[0]}` : x.kind === 'sent' || x.kind === 'cue' ? `${x.s.pt} → ${sentHtml(x)}` : rbx(x.raw.replace('＿', x.a)))
 
 function begin(list) {
   msg.value = ''
@@ -105,6 +113,7 @@ function check() {
   const v = flush(answer.value).normalize('NFKC')
   if (!cl(v)) return
   if (x.kind === 'conj') finish(x.ans.includes(v.replace(/\s/g, '')))
+  else if (x.kind === 'num') finish(x.ans.includes(hira(v).replace(/\s/g, '')))
   else finish(matchChunks(v, x.s.c))
 }
 function choose(o) {
@@ -158,7 +167,7 @@ function fix(which) {
       <p v-if="msg" class="bad">{{ msg }}</p>
       <div class="row" style="margin-top: 16px"><button :disabled="!cfg.types.length" @click="start">Começar</button></div>
     </div>
-    <p class="hint">Digitando: use romaji (masu → ます). Com Caps Lock ligado, a conversão sai em katakana. Lições 1 e 2 não têm conjugação, só frases e lacunas.</p>
+    <p class="hint">Digitando: use romaji (masu → ます). Com Caps Lock ligado, a conversão sai em katakana. Lições 1 e 2 não têm conjugação, só frases e lacunas. Números e contadores existem nas lições 1 a 4, 6, 8 e 9.</p>
   </section>
 
   <!-- treino -->
@@ -173,6 +182,14 @@ function fix(which) {
       <template v-if="q.kind === 'conj'">
         <div class="word" v-html="kanjiHtml(q.k, q.r)"></div>
         <div class="pt">{{ q.pt }}</div>
+      </template>
+      <template v-else-if="q.kind === 'num'">
+        <div class="pt">Como se lê?</div>
+        <div class="word">{{ q.big }}</div>
+      </template>
+      <template v-else-if="q.kind === 'cue'">
+        <div class="word t" style="font-size: 1.7rem" v-html="rbx(q.cue)"></div>
+        <div class="pt">{{ q.s.pt }}</div>
       </template>
       <template v-else-if="q.kind === 'sent'">
         <div class="word t" style="font-size: 1.7rem">{{ q.s.pt }}</div>
@@ -198,7 +215,8 @@ function fix(which) {
           <div class="big" :class="good ? 'ok' : 'bad'">{{ good ? 'Correto!' : 'Quase.' }}</div>
           <div v-if="!good && q.kind !== 'blank'" class="rule">Você escreveu: {{ answer }}</div>
           <template v-if="q.kind === 'conj'"><div>Resposta: {{ q.ans[0] }}<template v-if="q.ans[0] !== q.ans[1]"> ({{ q.ans[1] }})</template></div><div class="rule">{{ q.rule }}</div></template>
-          <template v-else-if="q.kind === 'sent'"><div style="font-size: 1.4rem" v-html="sentHtml(q)"></div><div class="rule">{{ fin(joinC(q, 1)) }} · {{ q.s.n }}</div></template>
+          <template v-else-if="q.kind === 'num'"><div>Resposta: {{ q.ans[0] }}<template v-if="q.ans.length > 1"> (também: {{ q.ans.slice(1).join(', ') }})</template></div><div class="rule">{{ q.rule }}</div></template>
+          <template v-else-if="q.kind === 'sent' || q.kind === 'cue'"><div style="font-size: 1.4rem" v-html="sentHtml(q)"></div><div class="rule">{{ fin(joinC(q, 1)) }} · {{ q.s.n }}</div></template>
           <div v-else class="rule">{{ q.why }}</div>
         </template>
       </div>

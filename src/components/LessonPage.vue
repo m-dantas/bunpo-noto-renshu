@@ -3,6 +3,8 @@ import { computed } from 'vue'
 import { GRAMMAR } from '../data/grammar'
 import { CONF } from '../data/drillConfig'
 import { rb } from '../utils/ruby'
+import { hasNum } from '../utils/numbers'
+import { CUES } from '../data/cues'
 
 const props = defineProps({ lesson: Number, tab: [Number, String] })
 const emit = defineEmits(['update:tab', 'go'])
@@ -16,6 +18,10 @@ const drillDesc = computed(() => {
   if (isAll.value) return props.lesson > 2 ? 'Conjugação e completar a lacuna, com as 3 partes' : 'Completar a lacuna, com as 3 partes'
   return CONF[props.lesson][props.tab].conj && props.lesson > 2 ? 'Só esta parte: conjugação e completar a lacuna' : 'Só esta parte: completar a lacuna'
 })
+const part = computed(() => (isAll.value ? null : props.tab))
+const numOn = computed(() => hasNum(props.lesson, part.value))
+const cueOn = computed(() => (CUES[props.lesson] || []).some(c => part.value == null || c.t === part.value))
+const scope = computed(() => (isAll.value ? 'lição toda' : 'só esta parte'))
 const buildDesc = computed(() => 'Monte com blocos ou escreva em kana' + (isAll.value ? '' : ' · só esta parte'))
 </script>
 
@@ -48,5 +54,7 @@ const buildDesc = computed(() => 'Monte com blocos ou escreva em kana' + (isAll.
     <h2 class="go">{{ isAll ? 'Hora de praticar (lição toda)' : `Hora de praticar (parte ${tab + 1})` }}</h2>
     <button class="choice" @click="$emit('go', 'drill')"><b>Treinar a gramática</b><span>{{ drillDesc }}</span></button>
     <button class="choice" @click="$emit('go', 'build')"><b>Criar frases</b><span>{{ buildDesc }}</span></button>
+    <button v-if="cueOn" class="choice" @click="$emit('go', 'cue')"><b>Palavras-chave → frase</b><span>Escreva a frase a partir das palavras, como no caderno · {{ scope }}</span></button>
+    <button v-if="numOn" class="choice" @click="$emit('go', 'num')"><b>Números e contadores</b><span>Idade, datas, horas, preços, 階, 枚, 人… · {{ scope }}</span></button>
   </section>
 </template>

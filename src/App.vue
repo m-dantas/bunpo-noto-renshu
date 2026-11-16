@@ -5,6 +5,7 @@ import TopicNav from './components/TopicNav.vue'
 import LessonPage from './components/LessonPage.vue'
 import GrammarDrill from './components/GrammarDrill.vue'
 import SentenceBuilder from './components/SentenceBuilder.vue'
+import ExtraDrill from './components/ExtraDrill.vue'
 import ChapterPage from './components/ChapterPage.vue'
 import KanjiDrill from './components/KanjiDrill.vue'
 import PracticeMix from './components/PracticeMix.vue'
@@ -14,7 +15,7 @@ import { GRAMMAR } from './data/grammar'
 import { KCHAPTERS } from './data/kanji'
 
 const book = ref('home') // home | bunpo | kanji | mix
-const view = ref('home') // home | menu | drill | build | kdrill
+const view = ref('home') // home | menu | drill | build | num | cue | kdrill
 const cur = ref(null) // lição (bunpo) ou capítulo (kanji)
 const tab = ref(0) // parte/seção (0..n) ou 'all'
 const kmode = ref('reading')
@@ -102,6 +103,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
       <ChapterPage v-else-if="view === 'menu'" v-model:tab="tab" :chapter="cur" @go="go" />
       <GrammarDrill v-else-if="view === 'drill'" :lesson="cur" :topic="topic" @back="view = 'menu'" />
       <SentenceBuilder v-else-if="view === 'build'" :lesson="cur" :topic="topic" @back="view = 'menu'" />
+      <ExtraDrill v-else-if="view === 'num' || view === 'cue'" :lesson="cur" :topic="topic" :kind="view" @back="view = 'menu'" />
       <KanjiDrill v-else :chapter="cur" :section="topic" :mode="kmode" @back="view = 'menu'" />
     </main>
   </div>

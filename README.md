@@ -79,6 +79,9 @@ Cada lição tem **3 partes**, como no livro (abas na página da lição). Ao es
 
 - `src/data/sentences.js`: cada frase tem `t` (índice da parte, de 0 a 2).
 - `src/data/blanks.js`: exercícios de completar a lacuna, `[parte, frase com ＿, alternativas, resposta, tradução, explicação]`.
+- `src/data/cues.js`: exercícios "Palavras-chave → frase" (`[parte, palavras, frase em blocos separados por /, tradução]`, com furigana `漢字《かんじ》`).
+- `src/utils/numbers.js`: motor de leitura de números e contadores (歳, 月日, 時分, 円, 階, 枚, 人, 匹, 回, 冊, 本, 杯, 時間) e o mapa de quais categorias cada lição/parte treina.
+- `src/components/ExtraDrill.vue`: tela dos dois treinos acima (também disponíveis como tipos no treino misto).
 - `src/data/drillConfig.js`: o que cada parte mistura em "Treinar a gramática" (conjugação e/ou lacuna; `conj` pode ser um texto ou uma lista de tipos).
 
 ## Adicionar uma nova lição
