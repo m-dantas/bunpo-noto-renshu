@@ -1,10 +1,11 @@
 <script setup>
 defineProps({ open: Boolean, current: Number, book: String, items: Array })
-defineEmits(['select', 'book'])
+defineEmits(['select', 'book', 'close'])
 </script>
 
 <template>
   <aside :class="{ open }">
+    <button type="button" class="closebtn" aria-label="Fechar o menu" @click="$emit('close')">✕</button>
     <button type="button" class="brand" :class="{ on: book === 'home' }" @click="$emit('book', 'home')">
       文法ノート<small>Início · a proposta do app</small>
     </button>

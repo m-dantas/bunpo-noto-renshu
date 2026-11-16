@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import SideMenu from './components/SideMenu.vue'
 import TopicNav from './components/TopicNav.vue'
 import LessonPage from './components/LessonPage.vue'
@@ -18,7 +18,10 @@ const view = ref('home') // home | menu | drill | build | kdrill
 const cur = ref(null) // lição (bunpo) ou capítulo (kanji)
 const tab = ref(0) // tópico/seção (0..n) ou 'all'
 const kmode = ref('reading')
-const open = ref(false)
+const open = ref(false) // gaveta do menu (celular)
+const mem = {} // onde você estava em cada livro (ao trocar de livro, volta para lá)
+
+const isMobile = () => window.matchMedia('(max-width: 760px)').matches
 
 const items = computed(() =>
   book.value === 'mix' || book.value === 'home' ? [] : book.value === 'bunpo'
@@ -40,23 +43,59 @@ const sub = computed(() => {
   if (view.value === 'menu' || labels.value.length < 2) return base
   return base + (topic.value == null ? ' · tudo' : ` · parte ${topic.value + 1}`)
 })
+// texto curto da barra superior (celular): onde você está
+const crumb = computed(() => {
+  if (book.value === 'home') return '文法ノート · Início'
+  if (book.value === 'mix') return '練習 · Treino misto'
+  const it = items.value.find(i => i.key === cur.value)
+  if (it) return `${it.label} ${it.title}`
+  return book.value === 'bunpo' ? '文法 · Gramática' : '漢字 · Kanji'
+})
 
-function setBook(b) { book.value = b; cur.value = null; view.value = 'home'; tab.value = 0; open.value = false }
+// Troca de livro: o menu NÃO fecha (você ainda vai escolher a lição). Só fecha em Início e Treino misto,
+// que não têm lista. Voltando a um livro, você retorna à lição em que estava.
+function setBook(b) {
+  if (b !== book.value) {
+    mem[book.value] = { cur: cur.value, tab: tab.value }
+    book.value = b
+    const m = mem[b]
+    cur.value = m ? m.cur : null
+    tab.value = m ? m.tab : 0
+    view.value = cur.value == null ? 'home' : 'menu'
+    window.scrollTo(0, 0)
+  }
+  if (b === 'home' || b === 'mix') open.value = false
+}
+// vindo dos cartões da página inicial: no celular já abre a lista de lições
+function openBook(b) {
+  setBook(b)
+  if (isMobile() && (b === 'bunpo' || b === 'kanji') && cur.value == null) open.value = true
+}
 function select(n) { cur.value = n; tab.value = 0; view.value = 'menu'; open.value = false; window.scrollTo(0, 0) }
 function go(v, mode) { view.value = v; if (mode) kmode.value = mode }
+
+// gaveta: trava a rolagem do fundo e fecha com Esc
+watch(open, v => { document.body.style.overflow = v && isMobile() ? 'hidden' : '' })
+const onKey = e => { if (e.key === 'Escape') open.value = false }
+onMounted(() => window.addEventListener('keydown', onKey))
+onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 </script>
 
 <template>
-  <SideMenu :open="open" :current="cur" :book="book" :items="items" @select="select" @book="setBook" />
+  <header class="topbar">
+    <button class="tbtn" aria-label="Abrir o menu" :aria-expanded="open" @click="open = !open">☰</button>
+    <span class="tt">{{ crumb }}</span>
+  </header>
+  <div class="scrim" :class="{ show: open }" @click="open = false"></div>
+  <SideMenu :open="open" :current="cur" :book="book" :items="items" @select="select" @book="setBook" @close="open = false" />
   <div class="wrap">
     <div class="topics-col">
-      <TopicNav v-if="view === 'menu' && labels.length > 1" v-model:tab="tab" :labels="labels" :title="book === 'bunpo' ? 'Tópicos' : 'Seções'" />
+      <TopicNav v-if="view === 'menu' && labels.length > 1 && book !== 'home' && book !== 'mix'" v-model:tab="tab" :labels="labels" :title="book === 'bunpo' ? 'Tópicos' : 'Seções'" />
     </div>
     <main>
-      <button class="burger" @click="open = !open">☰ Menu</button>
       <h1>{{ heading }}</h1>
       <p class="sub">{{ sub }}</p>
-      <HomePage v-if="book === 'home'" @open="setBook" />
+      <HomePage v-if="book === 'home'" @open="openBook" />
       <PracticeMix v-else-if="book === 'mix'" />
       <p v-else-if="view === 'home'">Escolha {{ book === 'bunpo' ? 'uma lição' : 'um capítulo' }} no menu lateral. Os itens em cinza ainda não foram desenvolvidos.</p>
       <LessonPage v-else-if="view === 'menu' && book === 'bunpo'" v-model:tab="tab" :lesson="cur" @go="go" />

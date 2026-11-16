@@ -42,6 +42,12 @@ src/
   utils/                      # conjugação, romaji → kana, perguntas, rubi (furigana)
 ```
 
+## Menu no celular
+
+No celular há uma barra fixa no topo (☰ e o lugar onde você está). O menu abre como gaveta com fundo escurecido (toque fora,
+no ✕ ou em Esc para fechar). Trocar entre **文法 / 漢字** não fecha a gaveta, porque você ainda vai escolher a lição; ela só
+fecha ao escolher uma lição ou ao abrir Início e Treino misto. Ao voltar a um livro, você retorna à lição em que estava.
+
 ## Início
 
 A tela inicial (`src/components/HomePage.vue`) apresenta a proposta do app e explica cada menu. Para abri-la, clique em
