@@ -58,11 +58,10 @@ A tela inicial (`src/components/HomePage.vue`) apresenta a proposta do app e exp
 O menu lateral tem um seletor de livros (**文法** e **漢字**):
 
 - **わたしの文法ノート** (gramática): lições 1 a 15 prontas, com 3 partes, lacunas e criação de frases.
-- **漢字 hop! step! jump! 初級I** (kanji): capítulos 0 a 9 do sumário do livro. Por enquanto só o **capítulo 0** está
-  desenvolvido (26 kanji em 3 seções); os demais já têm a lista de kanji em `src/data/kanji.js` e aparecem desativados.
+- **漢字 hop! step! jump! 初級I** (kanji): capítulos 0 a 9 do sumário do livro, todos prontos (116 kanji), cada um com
+  3 seções (`ch0` a `ch9` em `src/data/kanji.js`). As seções dos capítulos 1 a 9 são um agrupamento próprio do app.
 
-Para desenvolver um capítulo de kanji, troque o `todo(...)` dele em `src/data/kanji.js` por um objeto com `ready: true` e
-`sections`, no mesmo formato do `ch0` (cada kanji: `[kanji, significado, kun, on, palavras]`; palavras no formato
+Para ajustar um capítulo de kanji, edite o `chN` dele em `src/data/kanji.js` (cada kanji: `[kanji, significado, kun, on, palavras]`; palavras no formato
 `'山田《やまだ》さん=Sr(a). Yamada'`). Os exemplos de palavras são escritos para este app, não copiados do livro.
 
 Treinos de kanji (`KanjiDrill.vue`): kanji → leitura, ler palavras (digitando em romaji), kanji → significado e significado → kanji.

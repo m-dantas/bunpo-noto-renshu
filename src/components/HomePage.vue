@@ -32,7 +32,7 @@ const nChapters = KCHAPTERS.filter(c => c.ready).length
 
     <article class="topic">
       <h2>漢字 · Kanji</h2>
-      <p>Capítulos do livro de kanji, do 0 ao 9. Por enquanto está pronto <b>{{ nChapters }} capítulo</b> (o capítulo 0, com {{ ALL_KANJI.length }} kanji em 3 seções); os demais mostram “em breve”.</p>
+      <p>Capítulos do livro de kanji, do 0 ao 9. Estão prontos <b>{{ nChapters }} capítulos</b>, com <b>{{ ALL_KANJI.length }} kanji</b> no total. Cada capítulo tem 3 seções, como o capítulo 0.</p>
       <p>Cada kanji aparece com o significado, as leituras <b>kun</b> e <b>on</b> e palavras de exemplo. Há quatro treinos, que você troca dentro da mesma tela:</p>
       <p><span class="pat">Kanji → leitura</span> <span class="pat">Ler palavras</span> <span class="pat">Kanji → significado</span> <span class="pat">Significado → kanji</span></p>
       <button @click="$emit('open', 'kanji')">Abrir os kanji</button>
