@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { toKana, kt, flush } from '../utils/kana'
 
 defineProps({ modelValue: String, disabled: Boolean })
 const emit = defineEmits(['update:modelValue'])
+const { t } = useI18n()
 const el = ref(null)
 const kata = ref(false)
 let nn = false // acabou de digitar “nn” (→ ん): se vier vogal, ela forma a sílaba com n (donna → どんな)
@@ -60,8 +62,8 @@ defineExpose({ focus: () => el.value && el.value.focus() })
 <template>
   <div class="kana">
     <input ref="el" type="text" :value="modelValue" :disabled="disabled" autocomplete="off" autocapitalize="off"
-      spellcheck="false" lang="ja" aria-label="Sua resposta em japonês"
+      spellcheck="false" lang="ja" :aria-label="t('kana.aria')"
       @keydown="onKeydown" @keyup="kata = caps($event)" @input="onInput" />
-    <div class="mode">{{ kata ? 'ア · Caps Lock ligado: katakana' : 'あ · Caps Lock desligado: hiragana' }}</div>
+    <div class="mode">{{ t(kata ? 'kana.kata' : 'kana.hira') }}</div>
   </div>
 </template>

@@ -8,9 +8,12 @@ import { flush } from '../utils/kana'
 import { matchChunks } from '../utils/answer'
 import { rb, furi } from '../utils/ruby'
 import { useEnter } from '../utils/useEnter'
+import { useI18n } from 'vue-i18n'
+import { tc } from '../i18n'
 
 const props = defineProps({ lesson: Number, topic: { type: Number, default: null }, kind: String })
 defineEmits(['back'])
+const { t } = useI18n()
 
 const pool = props.kind === 'cue' ? (CUES[props.lesson] || []).filter(c => props.topic == null || c.t === props.topic) : []
 const hira = s => s.replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60))
@@ -56,55 +59,55 @@ next()
 
 <template>
   <section>
-    <button class="back" @click="$emit('back')">← Voltar à lição</button>
+    <button class="back" @click="$emit('back')">{{ t('common.backLesson') }}</button>
     <div class="stats">
-      <div>Sequência<b>{{ streak }}</b></div>
-      <div>Acertos<b>{{ ok }}/{{ total }}</b></div>
+      <div>{{ t('common.streak') }}<b>{{ streak }}</b></div>
+      <div>{{ t('common.hits') }}<b>{{ ok }}/{{ total }}</b></div>
     </div>
 
     <div v-if="q" class="sheet">
       <div class="tags">
-        <span class="tag">{{ kind === 'num' ? 'Números e contadores' : 'Palavras-chave → frase' }}</span>
+        <span class="tag">{{ t(kind === 'num' ? 'common.num' : 'common.cue') }}</span>
         <span v-if="kind === 'num'" class="tag">{{ q.label }}</span>
       </div>
 
       <template v-if="kind === 'num'">
-        <div class="pt">Como se lê?</div>
-        <div class="word">{{ q.big }}</div>
+        <div class="pt">{{ t('common.howRead') }}</div>
+        <div class="word" lang="ja">{{ q.big }}</div>
       </template>
       <template v-else>
-        <div class="pt">Escreva a frase completa com estas palavras (ajuste as partículas e as formas):</div>
-        <div class="word t" style="font-size: 1.7rem" v-html="cueHtml(q.cue)"></div>
-        <div class="pt">{{ q.pt }}</div>
+        <div class="pt">{{ t('extra.cuePrompt') }}</div>
+        <div class="word t" lang="ja" style="font-size: 1.7rem" v-html="cueHtml(tc(q.cue))"></div>
+        <div class="pt">{{ tc(q.pt) }}</div>
       </template>
 
       <div class="row">
         <KanaInput ref="inp" v-model="answer" :disabled="answered" />
-        <button ref="go" @click="primary">{{ answered ? 'Próxima' : 'Verificar' }}</button>
+        <button ref="go" @click="primary">{{ answered ? t('common.next') : t('common.check') }}</button>
       </div>
 
       <div class="fb" aria-live="polite">
         <template v-if="answered">
-          <div class="big" :class="good ? 'ok' : 'bad'">{{ good ? 'Correto!' : 'Quase.' }}</div>
-          <div v-if="!good" class="rule">Você escreveu: {{ answer }}</div>
+          <div class="big" :class="good ? 'ok' : 'bad'">{{ good ? t('common.correct') : t('common.almost') }}</div>
+          <div v-if="!good" class="rule">{{ t('common.youWrote', { a: answer }) }}</div>
           <template v-if="kind === 'num'">
-            <div>Resposta: {{ q.ans[0] }}<template v-if="q.ans.length > 1"> (também: {{ q.ans.slice(1).join(', ') }})</template></div>
+            <div>{{ t('common.answer', { a: q.ans[0] }) }}<template v-if="q.ans.length > 1">{{ t('common.also', { list: q.ans.slice(1).join(', ') }) }}</template></div>
             <div class="rule">{{ q.rule }}</div>
           </template>
-          <div v-else style="font-size: 1.4rem" v-html="sentHtml(q)"></div>
+          <div v-else lang="ja" style="font-size: 1.4rem" v-html="sentHtml(q)"></div>
         </template>
       </div>
     </div>
 
     <details>
-      <summary>Opções</summary>
+      <summary>{{ t('common.options') }}</summary>
       <fieldset v-if="kind === 'cue'">
-        <legend>Mostrar</legend>
-        <label>Furigana
-          <select v-model="furiOn"><option :value="true">Com furigana</option><option :value="false">Sem furigana</option></select>
+        <legend>{{ t('common.show') }}</legend>
+        <label>{{ t('common.furigana') }}
+          <select v-model="furiOn"><option :value="true">{{ t('common.withFuri') }}</option><option :value="false">{{ t('common.noFuri') }}</option></select>
         </label>
       </fieldset>
-      <p class="hint">Digite em romaji: minúsculas viram ひらがな e, com Caps Lock ligado, viram カタカナ. Nos números, escreva a leitura em kana (ex.: san-ji → さんじ).<template v-if="kind === 'cue'"> Cada bloco vale em kanji ou em kana, e algarismos são aceitos nos números.</template></p>
+      <p class="hint">{{ t('extra.hint') }}<template v-if="kind === 'cue'">{{ t('extra.hintCue') }}</template></p>
     </details>
   </section>
 </template>

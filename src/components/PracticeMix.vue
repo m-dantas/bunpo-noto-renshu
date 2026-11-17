@@ -12,9 +12,13 @@ import { flush } from '../utils/kana'
 import { matchChunks } from '../utils/answer'
 import { rb, furi } from '../utils/ruby'
 import { useEnter } from '../utils/useEnter'
+import { useI18n } from 'vue-i18n'
+import { tc } from '../i18n'
+
+const { t } = useI18n()
 
 const lessons = READY
-const TYPES = [['conj', 'Conjugar (digitar)'], ['sent', 'Traduzir frase (digitar)'], ['blank', 'Completar a lacuna (escolher)'], ['cue', 'Palavras-chave → frase (digitar)'], ['num', 'Números e contadores (digitar)']]
+const TYPES = ['conj', 'sent', 'blank', 'cue', 'num']
 const cfg = reactive({ from: lessons[0], to: Math.min(5, lessons[lessons.length - 1]), types: ['conj', 'sent'], count: 10, hints: true, furi: true })
 
 const stage = ref('setup') // setup | run | done
@@ -50,7 +54,7 @@ const genSent = L => { const s = pick(SENTENCES[L]); return { kind: 'sent', L, s
 const genNum = L => (hasNum(L) ? { kind: 'num', L, ...makeNum(L) } : null)
 const genCue = L => {
   const c = pick(CUES[L] || [])
-  return c ? { kind: 'cue', L, cue: c.cue, s: { c: c.c, pt: c.pt, n: 'Palavras-chave' } } : null
+  return c ? { kind: 'cue', L, cue: c.cue, s: { c: c.c, pt: c.pt, n: t('common.cueShort') } } : null
 }
 const hira = s => s.replace(/[\u30a1-\u30f6]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60))
 const genBlank = L => { const b = pick(BLANKS[L]); return { kind: 'blank', L, raw: b[1], opts: shuffle(b[2]), a: b[3], pt: b[4], why: b[5] } }
@@ -79,16 +83,16 @@ const byLesson = computed(() => {
   results.value.forEach(r => { (m[r.q.L] ||= { ok: 0, n: 0 }).n++; if (r.good) m[r.q.L].ok++ })
   return Object.entries(m).map(([L, v]) => ({ L, ...v }))
 })
-const tags = x => (x.kind === 'conj' ? x.tag : x.kind === 'num' ? ['Números e contadores', x.label] : x.kind === 'cue' ? ['Palavras-chave → frase'] : x.kind === 'sent' ? (cfg.hints ? ['Traduza para o japonês', x.s.n] : ['Traduza para o japonês']) : ['Completar a lacuna'])
+const tags = x => (x.kind === 'conj' ? x.tag : x.kind === 'num' ? [t('common.num'), x.label] : x.kind === 'cue' ? [t('common.cue')] : x.kind === 'sent' ? (cfg.hints ? [t('common.translate'), tc(x.s.n)] : [t('common.translate')]) : [t('common.blank')])
 const blankHtml = computed(() =>
   q.value && q.value.kind === 'blank'
     ? rbx(q.value.raw.replace('＿', answered.value ? `<b class="ok">${q.value.a}</b>` : '<span class="blank"></span>'))
     : '')
-const missHtml = x => (x.kind === 'conj' ? `${kanjiHtml(x.k, x.r)} → ${x.ans[0]}` : x.kind === 'num' ? `${x.big} → ${x.ans[0]}` : x.kind === 'sent' || x.kind === 'cue' ? `${x.s.pt} → ${sentHtml(x)}` : rbx(x.raw.replace('＿', x.a)))
+const missHtml = x => (x.kind === 'conj' ? `${kanjiHtml(x.k, x.r)} → ${x.ans[0]}` : x.kind === 'num' ? `${x.big} → ${x.ans[0]}` : x.kind === 'sent' || x.kind === 'cue' ? `${tc(x.s.pt)} → ${sentHtml(x)}` : rbx(x.raw.replace('＿', x.a)))
 
 function begin(list) {
   msg.value = ''
-  if (!list.length) { msg.value = 'Não há exercícios desses tipos nas lições escolhidas. Marque outro tipo ou amplie o intervalo.'; stage.value = 'setup'; return }
+  if (!list.length) { msg.value = t('mix.empty'); stage.value = 'setup'; return }
   queue.value = list
   idx.value = 0
   results.value = []
@@ -137,67 +141,67 @@ function fix(which) {
 <template>
   <!-- configuração -->
   <section v-if="stage === 'setup'">
-    <h2 class="go" style="margin-top: 0">Treino misto</h2>
-    <p class="lead">Escolha um intervalo de lições e pratique escrevendo a gramática de todas elas misturada.</p>
+    <h2 class="go" style="margin-top: 0">{{ t('mix.title') }}</h2>
+    <p class="lead">{{ t('mix.lead') }}</p>
     <div class="sheet">
       <fieldset class="first">
-        <legend>Lições</legend>
-        <label>De
+        <legend>{{ t('mix.lessons') }}</legend>
+        <label>{{ t('mix.from') }}
           <select v-model.number="cfg.from" @change="fix('from')"><option v-for="n in lessons" :key="n" :value="n">{{ n }}</option></select>
         </label>
-        <label>até
+        <label>{{ t('mix.to') }}
           <select v-model.number="cfg.to" @change="fix('to')"><option v-for="n in lessons" :key="n" :value="n">{{ n }}</option></select>
         </label>
-        <span class="lead">{{ inRange().length }} lição(ões)</span>
+        <span class="lead">{{ t('mix.count', { n: inRange().length }) }}</span>
       </fieldset>
       <fieldset>
-        <legend>Tipos de exercício</legend>
-        <label v-for="t in TYPES" :key="t[0]"><input v-model="cfg.types" type="checkbox" :value="t[0]" />{{ t[1] }}</label>
+        <legend>{{ t('mix.typesLegend') }}</legend>
+        <label v-for="k in TYPES" :key="k"><input v-model="cfg.types" type="checkbox" :value="k" />{{ t('mix.types.' + k) }}</label>
       </fieldset>
       <fieldset>
-        <legend>Sessão</legend>
-        <label>Questões
+        <legend>{{ t('mix.session') }}</legend>
+        <label>{{ t('mix.questions') }}
           <select v-model.number="cfg.count"><option :value="10">10</option><option :value="20">20</option><option :value="30">30</option><option :value="50">50</option></select>
         </label>
-        <label><input v-model="cfg.hints" type="checkbox" />Mostrar dicas (blocos e ponto de gramática)</label>
-        <label>Furigana
-          <select v-model="cfg.furi"><option :value="true">Com furigana</option><option :value="false">Sem furigana</option></select>
+        <label><input v-model="cfg.hints" type="checkbox" />{{ t('mix.hints') }}</label>
+        <label>{{ t('common.furigana') }}
+          <select v-model="cfg.furi"><option :value="true">{{ t('common.withFuri') }}</option><option :value="false">{{ t('common.noFuri') }}</option></select>
         </label>
       </fieldset>
       <p v-if="msg" class="bad">{{ msg }}</p>
-      <div class="row" style="margin-top: 16px"><button :disabled="!cfg.types.length" @click="start">Começar</button></div>
+      <div class="row" style="margin-top: 16px"><button :disabled="!cfg.types.length" @click="start">{{ t('mix.start') }}</button></div>
     </div>
-    <p class="hint">Digitando: use romaji (masu → ます). Com Caps Lock ligado, a conversão sai em katakana. Lições 1 e 2 não têm conjugação, só frases e lacunas. Números e contadores existem nas lições 1 a 4, 6, 8 e 9.</p>
+    <p class="hint">{{ t('mix.hint') }}</p>
   </section>
 
   <!-- treino -->
   <section v-else-if="stage === 'run' && q">
-    <button class="back" @click="stage = 'setup'">← Encerrar treino</button>
-    <div class="stats"><div>Questão<b>{{ idx + 1 }}/{{ queue.length }}</b></div><div>Acertos<b>{{ okCount }}</b></div></div>
+    <button class="back" @click="stage = 'setup'">{{ t('mix.stop') }}</button>
+    <div class="stats"><div>{{ t('common.question') }}<b>{{ idx + 1 }}/{{ queue.length }}</b></div><div>{{ t('common.hits') }}<b>{{ okCount }}</b></div></div>
     <div class="bar"><span :style="{ width: (idx / queue.length) * 100 + '%' }"></span></div>
 
     <div class="sheet">
-      <div class="tags"><span class="tag">第{{ q.L }}課</span><span v-for="t in tags(q)" :key="t" class="tag">{{ t }}</span></div>
+      <div class="tags"><span class="tag">第{{ q.L }}課</span><span v-for="x in tags(q)" :key="x" class="tag">{{ x }}</span></div>
 
       <template v-if="q.kind === 'conj'">
-        <div class="word" v-html="kanjiHtml(q.k, q.r)"></div>
-        <div class="pt">{{ q.pt }}</div>
+        <div class="word" lang="ja" v-html="kanjiHtml(q.k, q.r)"></div>
+        <div class="pt">{{ tc(q.pt) }}</div>
       </template>
       <template v-else-if="q.kind === 'num'">
-        <div class="pt">Como se lê?</div>
-        <div class="word">{{ q.big }}</div>
+        <div class="pt">{{ t('common.howRead') }}</div>
+        <div class="word" lang="ja">{{ q.big }}</div>
       </template>
       <template v-else-if="q.kind === 'cue'">
-        <div class="word t" style="font-size: 1.7rem" v-html="rbx(q.cue)"></div>
-        <div class="pt">{{ q.s.pt }}</div>
+        <div class="word t" lang="ja" style="font-size: 1.7rem" v-html="rbx(tc(q.cue))"></div>
+        <div class="pt">{{ tc(q.s.pt) }}</div>
       </template>
       <template v-else-if="q.kind === 'sent'">
-        <div class="word t" style="font-size: 1.7rem">{{ q.s.pt }}</div>
-        <div v-if="cfg.hints" class="choices"><button v-for="h in q.hint" :key="h[0]" class="tl" type="button" disabled v-html="kanjiHtml(h[0], h[1])"></button></div>
+        <div class="word t" style="font-size: 1.7rem">{{ tc(q.s.pt) }}</div>
+        <div v-if="cfg.hints" class="choices" lang="ja"><button v-for="h in q.hint" :key="h[0]" class="tl" type="button" disabled v-html="kanjiHtml(h[0], h[1])"></button></div>
       </template>
       <template v-else>
-        <div class="bq" v-html="blankHtml"></div>
-        <div class="pt">{{ q.pt }}</div>
+        <div class="bq" lang="ja" v-html="blankHtml"></div>
+        <div class="pt">{{ tc(q.pt) }}</div>
         <div class="choices">
           <button v-for="o in q.opts" :key="o" class="tl" :class="{ right: answered && o === q.a, wrong: answered && o === picked && o !== q.a }"
             :disabled="answered" @click="choose(o)" v-html="rbx(o)"></button>
@@ -206,18 +210,18 @@ function fix(which) {
 
       <div v-if="q.kind !== 'blank'" class="row">
         <KanaInput ref="inp" v-model="answer" :disabled="answered" />
-        <button ref="go" @click="primary">{{ answered ? 'Próxima' : 'Verificar' }}</button>
+        <button ref="go" @click="primary">{{ answered ? t('common.next') : t('common.check') }}</button>
       </div>
-      <div v-else class="row"><button v-if="answered" ref="go" @click="primary">Próxima</button></div>
+      <div v-else class="row"><button v-if="answered" ref="go" @click="primary">{{ t('common.next') }}</button></div>
 
       <div class="fb" aria-live="polite">
         <template v-if="answered">
-          <div class="big" :class="good ? 'ok' : 'bad'">{{ good ? 'Correto!' : 'Quase.' }}</div>
-          <div v-if="!good && q.kind !== 'blank'" class="rule">Você escreveu: {{ answer }}</div>
-          <template v-if="q.kind === 'conj'"><div>Resposta: {{ q.ans[0] }}<template v-if="q.ans[0] !== q.ans[1]"> ({{ q.ans[1] }})</template></div><div class="rule">{{ q.rule }}</div></template>
-          <template v-else-if="q.kind === 'num'"><div>Resposta: {{ q.ans[0] }}<template v-if="q.ans.length > 1"> (também: {{ q.ans.slice(1).join(', ') }})</template></div><div class="rule">{{ q.rule }}</div></template>
-          <template v-else-if="q.kind === 'sent' || q.kind === 'cue'"><div style="font-size: 1.4rem" v-html="sentHtml(q)"></div><div class="rule">{{ fin(joinC(q, 1)) }} · {{ q.s.n }}</div></template>
-          <div v-else class="rule">{{ q.why }}</div>
+          <div class="big" :class="good ? 'ok' : 'bad'">{{ good ? t('common.correct') : t('common.almost') }}</div>
+          <div v-if="!good && q.kind !== 'blank'" class="rule">{{ t('common.youWrote', { a: answer }) }}</div>
+          <template v-if="q.kind === 'conj'"><div>{{ t('common.answer', { a: q.ans[0] }) }}<template v-if="q.ans[0] !== q.ans[1]"> ({{ q.ans[1] }})</template></div><div class="rule">{{ q.rule }}</div></template>
+          <template v-else-if="q.kind === 'num'"><div>{{ t('common.answer', { a: q.ans[0] }) }}<template v-if="q.ans.length > 1">{{ t('common.also', { list: q.ans.slice(1).join(', ') }) }}</template></div><div class="rule">{{ q.rule }}</div></template>
+          <template v-else-if="q.kind === 'sent' || q.kind === 'cue'"><div lang="ja" style="font-size: 1.4rem" v-html="sentHtml(q)"></div><div class="rule">{{ fin(joinC(q, 1)) }} · {{ tc(q.s.n) }}</div></template>
+          <div v-else class="rule">{{ tc(q.why) }}</div>
         </template>
       </div>
     </div>
@@ -225,27 +229,27 @@ function fix(which) {
 
   <!-- resultado -->
   <section v-else-if="stage === 'done'">
-    <h2 class="go" style="margin-top: 0">Resultado</h2>
+    <h2 class="go" style="margin-top: 0">{{ t('mix.result') }}</h2>
     <div class="sheet">
       <div class="word" style="font-size: 3rem">{{ okCount }}/{{ results.length }}</div>
-      <div class="pt">{{ Math.round((okCount / results.length) * 100) }}% de acertos</div>
+      <div class="pt">{{ t('mix.pct', { n: Math.round((okCount / results.length) * 100) }) }}</div>
       <div style="overflow-x: auto">
         <table class="g">
-          <thead><tr><th>Lição</th><th>Acertos</th></tr></thead>
+          <thead><tr><th>{{ t('mix.lesson') }}</th><th>{{ t('common.hits') }}</th></tr></thead>
           <tbody>
             <tr v-for="b in byLesson" :key="b.L"><td>第{{ b.L }}課</td><td>{{ b.ok }}/{{ b.n }}</td></tr>
           </tbody>
         </table>
       </div>
       <template v-if="misses.length">
-        <h2 class="go">Para revisar</h2>
+        <h2 class="go">{{ t('mix.review') }}</h2>
         <ul class="kwords"><li v-for="(m, i) in misses" :key="i"><span class="tag">第{{ m.L }}課</span> <span class="kw" v-html="missHtml(m)"></span></li></ul>
       </template>
     </div>
     <div style="margin-top: 16px">
-      <button v-if="misses.length" class="choice" @click="retry"><b>Refazer só os erros</b><span>{{ misses.length }} questão(ões) que você errou</span></button>
-      <button class="choice" @click="start"><b>Novo treino com as mesmas opções</b><span>Lições {{ cfg.from }} a {{ cfg.to }}, {{ cfg.count }} questões</span></button>
-      <button class="choice" @click="stage = 'setup'"><b>Mudar as opções</b><span>Voltar à configuração</span></button>
+      <button v-if="misses.length" class="choice" @click="retry"><b>{{ t('mix.retry') }}</b><span>{{ t('mix.retryDesc', { n: misses.length }) }}</span></button>
+      <button class="choice" @click="start"><b>{{ t('mix.again') }}</b><span>{{ t('mix.againDesc', { from: cfg.from, to: cfg.to, n: cfg.count }) }}</span></button>
+      <button class="choice" @click="stage = 'setup'"><b>{{ t('mix.change') }}</b><span>{{ t('mix.changeDesc') }}</span></button>
     </div>
   </section>
 </template>

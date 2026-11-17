@@ -13,6 +13,10 @@ import HomePage from './components/HomePage.vue'
 import { LESSONS, READY } from './data/lessons'
 import { GRAMMAR } from './data/grammar'
 import { KCHAPTERS } from './data/kanji'
+import { useI18n } from 'vue-i18n'
+import { tc } from './i18n'
+
+const { t, locale } = useI18n()
 
 const book = ref('home') // home | bunpo | kanji | mix
 const view = ref('home') // home | menu | drill | build | num | cue | kdrill
@@ -26,31 +30,31 @@ const isMobile = () => window.matchMedia('(max-width: 760px)').matches
 
 const items = computed(() =>
   book.value === 'mix' || book.value === 'home' ? [] : book.value === 'bunpo'
-    ? LESSONS.map((l, i) => ({ key: i + 1, label: `第${i + 1}課`, title: l.title, pt: l.pt, ready: READY.includes(i + 1) }))
-    : KCHAPTERS.map(c => ({ key: c.n, label: `${c.n}章`, title: c.title, pt: c.pt, ready: c.ready }))
+    ? LESSONS.map((l, i) => ({ key: i + 1, label: `第${i + 1}課`, title: l.title, pt: tc(l.pt), ready: READY.includes(i + 1) }))
+    : KCHAPTERS.map(c => ({ key: c.n, label: `${c.n}章`, title: c.title, pt: tc(c.pt), ready: c.ready }))
 )
 const labels = computed(() => {
   if (cur.value == null) return []
-  return book.value === 'bunpo' ? GRAMMAR[cur.value].map(t => t[0]) : KCHAPTERS.find(c => c.n === cur.value).sections.map(s => s.t)
+  return book.value === 'bunpo' ? GRAMMAR[cur.value].map(x => tc(x[0])) : KCHAPTERS.find(c => c.n === cur.value).sections.map(s => tc(s.t))
 })
 const topic = computed(() => (tab.value === 'all' ? null : tab.value)) // null = tudo
-const heading = computed(() => ({ home: '文法ノート', bunpo: 'わたしの文法ノート', kanji: '漢字 hop! step! jump!', mix: '練習 · treino misto' })[book.value])
+const heading = computed(() => ({ home: '文法ノート', bunpo: 'わたしの文法ノート', kanji: '漢字 hop! step! jump!', mix: '練習 · ' + t('app.mixName') })[book.value])
 const sub = computed(() => {
-  if (book.value === 'home') return 'Treino de japonês para quem estuda com os seus livros'
-  if (book.value === 'mix') return 'Pratique várias lições de uma vez'
+  if (book.value === 'home') return t('app.sub.home')
+  if (book.value === 'mix') return t('app.sub.mix')
   if (cur.value == null) return book.value === 'bunpo' ? 'できる日本語 初級' : '初級 I · WEWORLD'
   const it = items.value.find(i => i.key === cur.value)
   const base = `${it.label} ${it.title}`
   if (view.value === 'menu' || labels.value.length < 2) return base
-  return base + (topic.value == null ? ' · tudo' : ` · parte ${topic.value + 1}`)
+  return base + (topic.value == null ? t('app.sub.all') : t('app.sub.part', { n: topic.value + 1 }))
 })
 // texto curto da barra superior (celular): onde você está
 const crumb = computed(() => {
-  if (book.value === 'home') return '文法ノート · Início'
-  if (book.value === 'mix') return '練習 · Treino misto'
+  if (book.value === 'home') return t('app.crumb.home')
+  if (book.value === 'mix') return t('app.crumb.mix')
   const it = items.value.find(i => i.key === cur.value)
   if (it) return `${it.label} ${it.title}`
-  return book.value === 'bunpo' ? '文法 · Gramática' : '漢字 · Kanji'
+  return t(book.value === 'bunpo' ? 'app.crumb.bunpo' : 'app.crumb.kanji')
 })
 
 // Troca de livro: o menu NÃO fecha (você ainda vai escolher a lição). Só fecha em Início e Treino misto,
@@ -84,27 +88,28 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 
 <template>
   <header class="topbar">
-    <button class="tbtn" aria-label="Abrir o menu" :aria-expanded="open" @click="open = !open">☰</button>
+    <button class="tbtn" :aria-label="t('app.openMenu')" :aria-expanded="open" @click="open = !open">☰</button>
     <span class="tt">{{ crumb }}</span>
   </header>
   <div class="scrim" :class="{ show: open }" @click="open = false"></div>
   <SideMenu :open="open" :current="cur" :book="book" :items="items" @select="select" @book="setBook" @close="open = false" />
   <div class="wrap">
     <div class="topics-col">
-      <TopicNav v-if="view === 'menu' && labels.length > 1 && book !== 'home' && book !== 'mix'" v-model:tab="tab" :labels="labels" :title="book === 'bunpo' ? 'Partes' : 'Seções'" />
+      <TopicNav v-if="view === 'menu' && labels.length > 1 && book !== 'home' && book !== 'mix'" v-model:tab="tab" :labels="labels" :title="t(book === 'bunpo' ? 'app.parts' : 'app.sections')" />
     </div>
     <main>
       <h1>{{ heading }}</h1>
       <p class="sub">{{ sub }}</p>
+      <!-- os treinos geram as questões já no idioma escolhido: ao trocar de idioma, recomeçam (:key) -->
       <HomePage v-if="book === 'home'" @open="openBook" />
-      <PracticeMix v-else-if="book === 'mix'" />
-      <p v-else-if="view === 'home'">Escolha {{ book === 'bunpo' ? 'uma lição' : 'um capítulo' }} no menu lateral. Os itens em cinza ainda não foram desenvolvidos.</p>
+      <PracticeMix v-else-if="book === 'mix'" :key="'mix-' + locale" />
+      <p v-else-if="view === 'home'">{{ t(book === 'bunpo' ? 'app.chooseLesson' : 'app.chooseChapter') }}</p>
       <LessonPage v-else-if="view === 'menu' && book === 'bunpo'" v-model:tab="tab" :lesson="cur" @go="go" />
       <ChapterPage v-else-if="view === 'menu'" v-model:tab="tab" :chapter="cur" @go="go" />
-      <GrammarDrill v-else-if="view === 'drill'" :lesson="cur" :topic="topic" @back="view = 'menu'" />
-      <SentenceBuilder v-else-if="view === 'build'" :lesson="cur" :topic="topic" @back="view = 'menu'" />
-      <ExtraDrill v-else-if="view === 'num' || view === 'cue'" :lesson="cur" :topic="topic" :kind="view" @back="view = 'menu'" />
-      <KanjiDrill v-else :chapter="cur" :section="topic" :mode="kmode" @back="view = 'menu'" />
+      <GrammarDrill v-else-if="view === 'drill'" :key="'drill-' + locale" :lesson="cur" :topic="topic" @back="view = 'menu'" />
+      <SentenceBuilder v-else-if="view === 'build'" :key="'build-' + locale" :lesson="cur" :topic="topic" @back="view = 'menu'" />
+      <ExtraDrill v-else-if="view === 'num' || view === 'cue'" :key="view + locale" :lesson="cur" :topic="topic" :kind="view" @back="view = 'menu'" />
+      <KanjiDrill v-else :key="'k-' + locale" :chapter="cur" :section="topic" :mode="kmode" @back="view = 'menu'" />
     </main>
   </div>
 </template>

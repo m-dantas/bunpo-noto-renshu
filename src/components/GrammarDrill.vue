@@ -7,11 +7,14 @@ import { rb } from '../utils/ruby'
 import { useEnter } from '../utils/useEnter'
 import { BLANKS } from '../data/blanks'
 import { CONF } from '../data/drillConfig'
+import { useI18n } from 'vue-i18n'
+import { tc } from '../i18n'
 
 const props = defineProps({ lesson: Number, topic: { type: Number, default: null } })
 defineEmits(['back'])
+const { t } = useI18n()
 
-const GROUPS = [['u', 'う-verbs'], ['ru', 'る-verbs'], ['irr', 'Irregulares']]
+const GROUPS = [['u', 'う-verbs'], ['ru', 'る-verbs'], ['irr', t('grammar.irr')]]
 const FORMS = {
   8: [['pol', 'ています'], ['neg', 'ていません'], ['plain', 'ている']],
   9: [['dict', '辞書形'], ['koto', 'ことができます'], ['te', 'て形']],
@@ -107,48 +110,48 @@ next()
 
 <template>
   <section>
-    <button class="back" @click="$emit('back')">← Voltar à lição</button>
+    <button class="back" @click="$emit('back')">{{ t('common.backLesson') }}</button>
     <div class="stats">
-      <div>Sequência<b>{{ streak }}</b></div>
-      <div>Recorde<b>{{ max }}</b></div>
-      <div>Acertos<b>{{ ok }}/{{ total }}</b></div>
+      <div>{{ t('common.streak') }}<b>{{ streak }}</b></div>
+      <div>{{ t('common.record') }}<b>{{ max }}</b></div>
+      <div>{{ t('common.hits') }}<b>{{ ok }}/{{ total }}</b></div>
     </div>
 
     <div v-if="q" class="sheet">
       <!-- completar a lacuna -->
       <template v-if="q.kind === 'blank'">
-        <div class="tags"><span class="tag">Completar a lacuna</span></div>
-        <div class="bq" v-html="blankHtml"></div>
-        <div class="pt">{{ showTr ? q.pt : '' }}</div>
+        <div class="tags"><span class="tag">{{ t('common.blank') }}</span></div>
+        <div class="bq" lang="ja" v-html="blankHtml"></div>
+        <div class="pt">{{ showTr ? tc(q.pt) : '' }}</div>
         <div class="choices">
           <button v-for="o in q.opts" :key="o" class="tl" :class="{ right: answered && o === q.a, wrong: answered && o === picked && o !== q.a }"
             :disabled="answered" @click="choose(o)" v-html="rb(o)"></button>
         </div>
         <div class="fb" aria-live="polite">
           <template v-if="answered">
-            <div class="big" :class="good ? 'ok' : 'bad'">{{ good ? 'Correto!' : 'Quase.' }}</div>
-            <div class="rule">{{ q.why }}</div>
+            <div class="big" :class="good ? 'ok' : 'bad'">{{ good ? t('common.correct') : t('common.almost') }}</div>
+            <div class="rule">{{ tc(q.why) }}</div>
           </template>
         </div>
-        <div class="row"><button v-if="answered" ref="go" @click="primary">Próxima</button></div>
+        <div class="row"><button v-if="answered" ref="go" @click="primary">{{ t('common.next') }}</button></div>
       </template>
 
       <!-- conjugação -->
       <template v-else>
-        <div class="tags"><span v-for="t in q.tag" :key="t" class="tag">{{ t }}</span></div>
-        <div class="word">
+        <div class="tags"><span v-for="x in q.tag" :key="x" class="tag">{{ x }}</span></div>
+        <div class="word" lang="ja">
           <ruby v-if="showFuri && q.k !== q.r">{{ q.k }}<rt>{{ q.r }}</rt></ruby>
           <template v-else>{{ q.k }}</template>
         </div>
-        <div class="pt">{{ showTr ? q.pt : '' }}</div>
+        <div class="pt">{{ showTr ? tc(q.pt) : '' }}</div>
         <div class="row">
           <KanaInput ref="inp" v-model="answer" :disabled="answered" />
-          <button ref="go" @click="primary">{{ answered ? 'Próxima' : 'Verificar' }}</button>
+          <button ref="go" @click="primary">{{ answered ? t('common.next') : t('common.check') }}</button>
         </div>
         <div class="fb" aria-live="polite">
           <template v-if="answered">
-            <div class="big" :class="good ? 'ok' : 'bad'">{{ good ? 'Correto!' : 'Quase. Resposta: ' + q.ans[0] }}</div>
-            <div v-if="!good" class="rule">Você escreveu: {{ answer }}</div>
+            <div class="big" :class="good ? 'ok' : 'bad'">{{ good ? t('common.correct') : t('common.almostAnswer', { a: q.ans[0] }) }}</div>
+            <div v-if="!good" class="rule">{{ t('common.youWrote', { a: answer }) }}</div>
             <div>{{ q.ans[0] === q.ans[1] ? '' : q.ans[1] }}</div>
             <div class="rule">{{ q.rule }}</div>
           </template>
@@ -157,29 +160,29 @@ next()
     </div>
 
     <details>
-      <summary>Opções</summary>
+      <summary>{{ t('common.options') }}</summary>
       <fieldset>
-        <legend>Mostrar</legend>
-        <label>Furigana
-          <select v-model="furi"><option value="always">sempre</option><option value="after">só depois de responder</option></select>
+        <legend>{{ t('common.show') }}</legend>
+        <label>{{ t('common.furigana') }}
+          <select v-model="furi"><option value="always">{{ t('common.always') }}</option><option value="after">{{ t('common.after') }}</option></select>
         </label>
-        <label>Tradução
-          <select v-model="tr"><option value="always">sempre</option><option value="after">só depois de responder</option></select>
+        <label>{{ t('common.translation') }}
+          <select v-model="tr"><option value="always">{{ t('common.always') }}</option><option value="after">{{ t('common.after') }}</option></select>
         </label>
       </fieldset>
       <fieldset v-if="showVerb">
-        <legend>{{ lesson === 9 ? 'Verbos (mostrados na forma ます)' : 'Verbos → Vています' }}</legend>
+        <legend>{{ t(lesson === 9 ? 'grammar.verbs9' : 'grammar.verbs8') }}</legend>
         <label v-for="g in GROUPS" :key="g[0]"><input v-model="opts.groups" type="checkbox" :value="g[0]" />{{ g[1] }}</label>
       </fieldset>
       <fieldset v-if="showForms">
-        <legend>{{ lesson === 9 ? 'Formas pedidas' : 'Formas do verbo' }}</legend>
+        <legend>{{ t(lesson === 9 ? 'grammar.forms9' : 'grammar.forms8') }}</legend>
         <label v-for="f in FORMS[lesson]" :key="f[0]"><input v-model="opts.forms" type="checkbox" :value="f[0]" />{{ f[1] }}</label>
       </fieldset>
       <fieldset v-if="showAdj">
-        <legend>Ligar frases com て</legend>
+        <legend>{{ t('grammar.adj') }}</legend>
         <label v-for="a in ADJ" :key="a[0]"><input v-model="opts.adj" type="checkbox" :value="a[0]" />{{ a[1] }}</label>
       </fieldset>
-      <p v-if="hasConj" class="hint">Nas conjugações, digite em romaji: minúsculas viram ひらがな e, com Caps Lock ligado, viram カタカナ (masu → ます, nn → ん, xtu → っ, - → ー). O IME japonês também funciona.</p>
+      <p v-if="hasConj" class="hint">{{ t('grammar.hint') }}</p>
     </details>
   </section>
 </template>

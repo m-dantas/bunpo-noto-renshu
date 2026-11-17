@@ -1,3 +1,5 @@
+import { t } from '../i18n'
+
 export const TE={う:"って",つ:"って",る:"って",む:"んで",ぶ:"んで",ぬ:"んで",く:"いて",ぐ:"いで",す:"して"};
 export function te(w,g){
   if(g==="irr"){ if(w.endsWith("する")) return w.slice(0,-2)+"して"; return w==="来る"?"来て":"きて"; }
@@ -8,7 +10,7 @@ export function te(w,g){
 export const SUF={pol:"います",neg:"いません",plain:"いる"};
 export const FORM={pol:"Vています",neg:"Vていません",plain:"Vている"};
 export function ruleV(w,g,f){
-  let r= g==="u" ? `Grupo う: ${w.slice(-1)} → ${TE[w.slice(-1)]}` : g==="ru" ? "Grupo る: tire る e coloque て" : "Irregular: する → して, くる → きて";
+  let r= g==="u" ? t('gen.uTe', { e: w.slice(-1), te: TE[w.slice(-1)] }) : t(g==="ru" ? 'gen.ruTe' : 'gen.irrTe8');
   return r+` + ${SUF[f]}`;
 }
 export const $=id=>document.getElementById(id);

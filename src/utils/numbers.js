@@ -1,4 +1,6 @@
 // Números e contadores do caderno (別冊): idade, datas, horas, preços, andares, duração e contadores.
+import { t } from '../i18n'
+
 const D = ['', 'いち', 'に', 'さん', 'よん', 'ご', 'ろく', 'なな', 'はち', 'きゅう']
 const pick = a => a[Math.floor(Math.random() * a.length)]
 const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1))
@@ -50,56 +52,56 @@ const alt7 = (s, n) => (n % 10 === 7 ? [s.replace(/なな(?!.*なな)/, 'しち'
 // ---------- categorias ----------
 // cada uma devolve { big, ans, rule }
 export const CATS = {
-  sai: { label: 'Idade (歳)', make() {
+  sai: { get label() { return t('num.sai.label') }, make() {
     const n = pick([rnd(1, 12), rnd(13, 19), 20, 20, rnd(21, 60)])
     return { big: `${n}歳`, ans: n === 20 ? ['はたち'] : WRITE(compose(n, T.sai), ...alt7(compose(n, T.sai), n)),
-      rule: '歳: 1 いっさい, 8 はっさい, 10 じゅっさい; 20 anos é はたち.' }
+      rule: t('num.sai.rule') }
   } },
-  date: { label: 'Data (月日)', make() {
+  date: { get label() { return t('num.date.label') }, make() {
     const m = rnd(1, 12), d = pick([rnd(1, 10), rnd(1, 31), rnd(11, 31)])
     return { big: `${m}月${d}日`, ans: [MONTH[m] + DAY[d]],
-      rule: 'Meses: 4 しがつ, 7 しちがつ, 9 くがつ. Dias: 1 ついたち, 2 ふつか … 10 とおか, 14 じゅうよっか, 20 はつか, 24 にじゅうよっか.' }
+      rule: t('num.date.rule') }
   } },
-  ji: { label: 'Horas (時・分)', make() {
+  ji: { get label() { return t('num.ji.label') }, make() {
     const h = rnd(1, 12), kind = pick(['jo', 'jo', 'min', 'han'])
-    if (kind === 'jo') return { big: `${h}:00`, ans: [HOUR[h]], rule: 'Horas: 4 よじ, 7 しちじ, 9 くじ.' }
-    if (kind === 'han') return { big: `${h}:30`, ans: [HOUR[h] + 'はん', HOUR[h] + compose(30, T.fun)], rule: '30 minutos: はん (ou さんじゅっぷん).' }
+    if (kind === 'jo') return { big: `${h}:00`, ans: [HOUR[h]], rule: t('num.ji.rule') }
+    if (kind === 'han') return { big: `${h}:30`, ans: [HOUR[h] + 'はん', HOUR[h] + compose(30, T.fun)], rule: t('num.ji.half') }
     const m = pick([5, 10, 15, 20, 25, 40, 45, 50, rnd(1, 59)])
-    return { big: `${h}:${String(m).padStart(2, '0')}`, ans: [HOUR[h] + compose(m, T.fun)], rule: '分: 1 いっぷん, 3 さんぷん, 4 よんぷん, 6 ろっぷん, 8 はっぷん, 10 じゅっぷん; os outros ふん.' }
+    return { big: `${h}:${String(m).padStart(2, '0')}`, ans: [HOUR[h] + compose(m, T.fun)], rule: t('num.ji.fun') }
   } },
-  nichi: { label: 'Dia do mês (日)', make() {
+  nichi: { get label() { return t('num.nichi.label') }, make() {
     const d = rnd(1, 31)
-    return { big: `${d}日`, ans: [DAY[d]], rule: 'Dias 1–10, 14, 20 e 24 são irregulares; 2 ふつか, 3 みっか, 4 よっか, 5 いつか, 6 むいか, 7 なのか, 8 ようか, 9 ここのか, 10 とおか.' }
+    return { big: `${d}日`, ans: [DAY[d]], rule: t('num.nichi.rule') }
   } },
-  en: { label: 'Preço (円)', make() {
+  en: { get label() { return t('num.en.label') }, make() {
     const n = pick([rnd(1, 9) * 100, rnd(1, 24) * 1000, rnd(1, 9) * 1000 + rnd(1, 9) * 100, rnd(1, 9) * 10000 + rnd(0, 9) * 1000, rnd(1, 99) * 100])
     let s = readBase(n)
     if (s.endsWith('よん')) s = s.slice(0, -2) + 'よ'
     return { big: `${n}円`, ans: WRITE(s + 'えん', ...(n % 10 === 7 ? [s.replace(/なな$/, 'しち') + 'えん'] : [])),
-      rule: '300 さんびゃく, 600 ろっぴゃく, 800 はっぴゃく; 3000 さんぜん, 8000 はっせん; 10000 いちまん; 4円 よえん.' }
+      rule: t('num.en.rule') }
   } },
-  kai: { label: 'Andar (階)', make() {
-    if (Math.random() < 0.15) { const n = rnd(1, 2); return { big: `地下${n}階`, ans: ['ちか' + T.kai[n]], rule: '地下 = ちか (subsolo).' } }
+  kai: { get label() { return t('num.kai.label') }, make() {
+    if (Math.random() < 0.15) { const n = rnd(1, 2); return { big: `地下${n}階`, ans: ['ちか' + T.kai[n]], rule: t('num.kai.basement') } }
     const n = rnd(1, 10)
-    return { big: `${n}階`, ans: [T.kai[n]], rule: '階: 1 いっかい, 3 さんがい, 6 ろっかい, 8 はっかい, 10 じゅっかい.' }
+    return { big: `${n}階`, ans: [T.kai[n]], rule: t('num.kai.rule') }
   } },
-  jikan: { label: 'Duração (時間・分)', make() {
+  jikan: { get label() { return t('num.jikan.label') }, make() {
     const kind = pick(['h', 'h', 'm', 'hm'])
-    if (kind === 'h') { const n = rnd(1, 12); return { big: `${n}時間`, ans: WRITE(HOURS[n], ...(n === 7 ? ['しちじかん'] : [])), rule: '時間: 4 よじかん, 7 ななじかん (しちじかん), 9 くじかん.' } }
-    if (kind === 'm') { const n = pick([10, 15, 20, 30, 40, 45, 50, rnd(1, 59)]); return { big: `${n}分`, ans: [compose(n, T.fun)], rule: '分: 1 いっぷん, 3 さんぷん, 4 よんぷん, 6 ろっぷん, 8 はっぷん, 10 じゅっぷん.' } }
+    if (kind === 'h') { const n = rnd(1, 12); return { big: `${n}時間`, ans: WRITE(HOURS[n], ...(n === 7 ? ['しちじかん'] : [])), rule: t('num.jikan.rule') } }
+    if (kind === 'm') { const n = pick([10, 15, 20, 30, 40, 45, 50, rnd(1, 59)]); return { big: `${n}分`, ans: [compose(n, T.fun)], rule: t('num.jikan.fun') } }
     const h = rnd(1, 3)
-    return { big: `${h}時間30分`, ans: [HOURS[h] + 'はん', HOURS[h] + compose(30, T.fun)], rule: '30 minutos: はん (ou さんじゅっぷん).' }
+    return { big: `${h}時間30分`, ans: [HOURS[h] + 'はん', HOURS[h] + compose(30, T.fun)], rule: t('num.ji.half') }
   } },
-  mai: { label: 'Folhas, ingressos (枚)', make() { const n = rnd(1, 10); return { big: `${n}枚`, ans: [compose(n, T.mai)], rule: '枚: regular, só 4 よんまい e 7 ななまい merecem atenção.' } } },
-  nin: { label: 'Pessoas (人)', make() {
+  mai: { get label() { return t('num.mai.label') }, make() { const n = rnd(1, 10); return { big: `${n}枚`, ans: [compose(n, T.mai)], rule: t('num.mai.rule') } } },
+  nin: { get label() { return t('num.nin.label') }, make() {
     const n = rnd(1, 10)
-    return { big: `${n}人`, ans: WRITE(T.nin[n], ...(n === 7 ? ['しちにん'] : [])), rule: '人: 1 ひとり, 2 ふたり, 4 よにん, 7 ななにん (しちにん); o resto: número + にん.' }
+    return { big: `${n}人`, ans: WRITE(T.nin[n], ...(n === 7 ? ['しちにん'] : [])), rule: t('num.nin.rule') }
   } },
-  hiki: { label: 'Animais pequenos (匹)', make() { const n = rnd(1, 10); return { big: `${n}匹`, ans: [compose(n, T.hiki)], rule: '匹: 1 いっぴき, 3 さんびき, 6 ろっぴき, 8 はっぴき, 10 じゅっぴき; os outros ひき.' } } },
-  kaisu: { label: 'Vezes (回)', make() { const n = rnd(1, 10); return { big: `${n}回`, ans: [compose(n, T.kaisu)], rule: '回: 1 いっかい, 6 ろっかい, 8 はっかい, 10 じゅっかい.' } } },
-  satsu: { label: 'Livros (冊)', make() { const n = rnd(1, 10); return { big: `${n}冊`, ans: [compose(n, T.satsu)], rule: '冊: 1 いっさつ, 8 はっさつ, 10 じゅっさつ.' } } },
-  hon: { label: 'Objetos longos (本)', make() { const n = rnd(1, 10); return { big: `${n}本`, ans: [compose(n, T.hon)], rule: '本: 1 いっぽん, 3 さんぼん, 6 ろっぽん, 8 はっぽん, 10 じゅっぽん; os outros ほん.' } } },
-  hai: { label: 'Copos, xícaras (杯)', make() { const n = rnd(1, 10); return { big: `${n}杯`, ans: [compose(n, T.hai)], rule: '杯: 1 いっぱい, 3 さんばい, 6 ろっぱい, 8 はっぱい, 10 じゅっぱい; os outros はい.' } } },
+  hiki: { get label() { return t('num.hiki.label') }, make() { const n = rnd(1, 10); return { big: `${n}匹`, ans: [compose(n, T.hiki)], rule: t('num.hiki.rule') } } },
+  kaisu: { get label() { return t('num.kaisu.label') }, make() { const n = rnd(1, 10); return { big: `${n}回`, ans: [compose(n, T.kaisu)], rule: t('num.kaisu.rule') } } },
+  satsu: { get label() { return t('num.satsu.label') }, make() { const n = rnd(1, 10); return { big: `${n}冊`, ans: [compose(n, T.satsu)], rule: t('num.satsu.rule') } } },
+  hon: { get label() { return t('num.hon.label') }, make() { const n = rnd(1, 10); return { big: `${n}本`, ans: [compose(n, T.hon)], rule: t('num.hon.rule') } } },
+  hai: { get label() { return t('num.hai.label') }, make() { const n = rnd(1, 10); return { big: `${n}杯`, ans: [compose(n, T.hai)], rule: t('num.hai.rule') } } },
 }
 
 // que categorias o caderno treina em cada lição e parte (índice da parte, de 0 a 2)

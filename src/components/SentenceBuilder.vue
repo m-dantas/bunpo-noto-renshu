@@ -6,9 +6,12 @@ import { flush } from '../utils/kana'
 import { matchChunks } from '../utils/answer'
 import { useEnter } from '../utils/useEnter'
 import { furi } from '../utils/ruby'
+import { useI18n } from 'vue-i18n'
+import { tc } from '../i18n'
 
 const props = defineProps({ lesson: Number, topic: { type: Number, default: null } })
 defineEmits(['back'])
+const { t } = useI18n()
 
 const pool = SENTENCES[props.lesson].filter(s => props.topic == null || s.t === props.topic)
 const typing = ref(false)
@@ -73,36 +76,36 @@ next()
 
 <template>
   <section>
-    <button class="back" @click="$emit('back')">← Voltar à lição</button>
-    <div class="stats"><div>Acertos<b>{{ ok }}/{{ total }}</b></div></div>
-    <div class="seg" role="group" aria-label="Modo de resposta">
-      <button type="button" :class="{ on: !typing }" @click="setMode(false)">Montar com blocos</button>
-      <button type="button" :class="{ on: typing }" @click="setMode(true)">Escrever</button>
+    <button class="back" @click="$emit('back')">{{ t('common.backLesson') }}</button>
+    <div class="stats"><div>{{ t('common.hits') }}<b>{{ ok }}/{{ total }}</b></div></div>
+    <div class="seg" role="group" :aria-label="t('build.modeAria')">
+      <button type="button" :class="{ on: !typing }" @click="setMode(false)">{{ t('build.blocks') }}</button>
+      <button type="button" :class="{ on: typing }" @click="setMode(true)">{{ t('build.write') }}</button>
     </div>
 
     <div v-if="q" class="sheet">
-      <div class="pt" style="font-size: 1.1rem">{{ q.pt }}</div>
+      <div class="pt" style="font-size: 1.1rem">{{ tc(q.pt) }}</div>
 
       <div v-if="!typing" class="built">
-        <span v-if="!picked.length" class="ph">Toque nos blocos para montar a frase</span>
+        <span v-if="!picked.length" class="ph">{{ t('build.placeholder') }}</span>
         <button v-for="i in picked" :key="i" class="tl" @click="tap(i)" v-html="tile(i)"></button>
       </div>
       <template v-else>
         <KanaInput ref="inp" v-model="typed" :disabled="answered" />
-        <div class="cap">Palavras para usar, fora de ordem. Digite em romaji (Caps Lock liga o katakana).</div>
+        <div class="cap">{{ t('build.cap') }}</div>
       </template>
 
-      <div class="bank" :class="{ ref: typing }">
+      <div class="bank" lang="ja" :class="{ ref: typing }">
         <button v-for="i in bank" :key="i" class="tl" @click="tap(i)" v-html="tile(i)"></button>
       </div>
 
-      <div class="row"><button ref="go" @click="primary">{{ answered ? 'Próxima' : 'Verificar' }}</button></div>
+      <div class="row"><button ref="go" @click="primary">{{ answered ? t('common.next') : t('common.check') }}</button></div>
       <div class="fb" aria-live="polite">
         <template v-if="answered">
-          <div class="big" :class="good ? 'ok' : 'bad'">{{ good ? 'Correto!' : 'Quase. Esta é a ordem certa:' }}</div>
-          <div v-if="!good && typing" class="rule">Você escreveu: {{ typed }}</div>
-          <div>{{ fin(join(0)) }}</div>
-          <div class="rule">{{ fin(join(1)) }} · {{ q.n }}</div>
+          <div class="big" :class="good ? 'ok' : 'bad'">{{ good ? t('common.correct') : t('build.almost') }}</div>
+          <div v-if="!good && typing" class="rule">{{ t('common.youWrote', { a: typed }) }}</div>
+          <div lang="ja">{{ fin(join(0)) }}</div>
+          <div class="rule">{{ fin(join(1)) }} · {{ tc(q.n) }}</div>
         </template>
       </div>
     </div>
