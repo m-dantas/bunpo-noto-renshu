@@ -157,5 +157,31 @@ const RAW = {
 // "漢字《かんじ》かな" → [kanji, leitura]
 const chunk = s => [s.replace(/《[^》]*》/g, ''), s.replace(/[一-鿿々]+《([^》]+)》/g, '$1')]
 
+// leituras tiradas das frases: 漢字《かんじ》 → [漢字, かんじ]; com número, 25歳《にじゅうごさい》 → [25歳, …]
+const readings = sent => [...sent.matchAll(/([0-9０-９]*[一-鿿々]+)《([^》]+)》/g)].map(m => [m[1], m[2]])
+const ALL = new Map()
+for (const L of Object.keys(RAW)) for (const [, , sent] of RAW[L]) for (const [k, r] of readings(sent)) if (!ALL.has(k)) ALL.set(k, r)
+
+// furigana das palavras-chave: cada trecho (algarismos + kanji) é coberto pelas maiores palavras conhecidas,
+// primeiro as da própria frase, depois as de todas as frases. O que não tiver leitura fica sem furigana.
+// Notas entre parênteses sem kana (traduções como （否定）, （简体）) ficam como estão.
+function cueRuby(own) {
+  const look = k => own.get(k) || ALL.get(k)
+  const ruby = s => s.replace(/（[^）]*）|[0-9０-９]*[一-鿿々]+/g, run => {
+    if (run[0] === '（') return /[ぁ-ゖァ-ヺ]/.test(run) ? `（${ruby(run.slice(1, -1))}）` : run
+    let out = '', i = 0
+    while (i < run.length) {
+      let j = run.length
+      while (j > i && !look(run.slice(i, j))) j--
+      if (j === i) { out += run[i++]; continue }
+      out += `<ruby>${run.slice(i, j)}<rt>${look(run.slice(i, j))}</rt></ruby>`
+      i = j
+    }
+    return out
+  })
+  return ruby
+}
+
 export const CUES = {}
-for (const L of Object.keys(RAW)) CUES[L] = RAW[L].map(([t, cue, sent, pt]) => ({ t, cue, pt, c: sent.split('/').map(chunk) }))
+for (const L of Object.keys(RAW))
+  CUES[L] = RAW[L].map(([t, cue, sent, pt]) => ({ t, cue, pt, c: sent.split('/').map(chunk), ruby: cueRuby(new Map(readings(sent))) }))

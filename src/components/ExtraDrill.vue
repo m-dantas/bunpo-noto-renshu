@@ -6,7 +6,7 @@ import { CUES } from '../data/cues'
 import { makeNum } from '../utils/numbers'
 import { flush } from '../utils/kana'
 import { matchChunks } from '../utils/answer'
-import { rb, furi } from '../utils/ruby'
+import { furi } from '../utils/ruby'
 import { useEnter } from '../utils/useEnter'
 import { useI18n } from 'vue-i18n'
 import { tc } from '../i18n'
@@ -31,7 +31,7 @@ function make() {
   let c
   do { c = pick(pool) } while (pool.length > 1 && c === last)
   last = c
-  return { cue: c.cue, pt: c.pt, c: c.c }
+  return { cue: c.cue, pt: c.pt, c: c.c, ruby: c.ruby }
 }
 function next() {
   q.value = make()
@@ -53,7 +53,7 @@ function check() {
 const primary = () => { if (answered.value) next(); else check() }
 useEnter(primary)
 const sentHtml = x => fin(x.c.map(k => (furiOn.value ? furi(k[0], k[1]) : k[0])).join(''))
-const cueHtml = s => (furiOn.value ? rb(s) : s.replace(/《[^》]*》/g, ''))
+const cueHtml = x => (furiOn.value ? x.ruby(tc(x.cue)) : tc(x.cue))
 next()
 </script>
 
@@ -77,7 +77,7 @@ next()
       </template>
       <template v-else>
         <div class="pt">{{ t('extra.cuePrompt') }}</div>
-        <div class="word t" lang="ja" style="font-size: 1.7rem" v-html="cueHtml(tc(q.cue))"></div>
+        <div class="word t" lang="ja" style="font-size: 1.7rem" v-html="cueHtml(q)"></div>
         <div class="pt">{{ tc(q.pt) }}</div>
       </template>
 
