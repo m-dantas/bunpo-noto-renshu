@@ -11,11 +11,16 @@ import pt from './locales/pt'
 
 export const LOCALES = [
   { code: 'pt', name: 'Português', html: 'pt-BR' },
+  { code: 'en', name: 'English', html: 'en' },
   { code: 'zh', name: '简体中文', html: 'zh-CN' },
+  { code: 'zh-Hant', name: '繁體中文', html: 'zh-Hant' },
 ]
 // cada idioma (menos o português) carrega as mensagens da interface e o dicionário do conteúdo
 const LOADERS = {
+  en: () => Promise.all([import('./locales/en.js'), import('./content/en/index.js')]),
   zh: () => Promise.all([import('./locales/zh.js'), import('./content/zh/index.js')]),
+  // gerado do simplificado (OpenCC cn → twp); veja o cabeçalho de locales/zh-Hant.js
+  'zh-Hant': () => Promise.all([import('./locales/zh-Hant.js'), import('./content/zh-Hant/index.js')]),
 }
 const KEY = 'lang'
 const known = code => LOCALES.some(l => l.code === code)
@@ -28,7 +33,9 @@ function initial() {
   if (known(s)) return s
   const nav = typeof navigator === 'undefined' ? [] : (navigator.languages || [navigator.language || ''])
   for (const n of nav.map(x => x.toLowerCase())) {
-    const hit = LOCALES.find(l => n === l.code || n.startsWith(l.code + '-'))
+    // chinês: Taiwan, Hong Kong, Macau ou escrita tradicional → tradicional; o resto → simplificado
+    if (/^zh-(hant|tw|hk|mo)(-|$)/.test(n)) return 'zh-Hant'
+    const hit = LOCALES.find(l => n === l.code.toLowerCase() || n.startsWith(l.code.toLowerCase() + '-'))
     if (hit) return hit.code
   }
   return 'pt'
