@@ -9,6 +9,7 @@ import ExtraDrill from './components/ExtraDrill.vue'
 import ChapterPage from './components/ChapterPage.vue'
 import KanjiDrill from './components/KanjiDrill.vue'
 import PracticeMix from './components/PracticeMix.vue'
+import ConjPractice from './components/ConjPractice.vue'
 import HomePage from './components/HomePage.vue'
 import { LESSONS, READY } from './data/lessons'
 import { GRAMMAR } from './data/grammar'
@@ -18,7 +19,7 @@ import { tc } from './i18n'
 
 const { t, locale } = useI18n()
 
-const book = ref('home') // home | bunpo | kanji | mix
+const book = ref('home') // home | bunpo | kanji | conj | mix
 const view = ref('home') // home | menu | drill | build | num | cue | kdrill
 const cur = ref(null) // lição (bunpo) ou capítulo (kanji)
 const tab = ref(0) // parte/seção (0..n) ou 'all'
@@ -29,7 +30,7 @@ const mem = {} // onde você estava em cada livro (ao trocar de livro, volta par
 const isMobile = () => window.matchMedia('(max-width: 760px)').matches
 
 const items = computed(() =>
-  book.value === 'mix' || book.value === 'home' ? [] : book.value === 'bunpo'
+  ['mix', 'home', 'conj'].includes(book.value) ? [] : book.value === 'bunpo'
     ? LESSONS.map((l, i) => ({ key: i + 1, label: `第${i + 1}課`, title: l.title, pt: tc(l.pt), ready: READY.includes(i + 1) }))
     : KCHAPTERS.map(c => ({ key: c.n, label: `${c.n}章`, title: c.title, pt: tc(c.pt), ready: c.ready }))
 )
@@ -38,10 +39,11 @@ const labels = computed(() => {
   return book.value === 'bunpo' ? GRAMMAR[cur.value].map(x => tc(x[0])) : KCHAPTERS.find(c => c.n === cur.value).sections.map(s => tc(s.t))
 })
 const topic = computed(() => (tab.value === 'all' ? null : tab.value)) // null = tudo
-const heading = computed(() => ({ home: '文法ノート', bunpo: 'わたしの文法ノート', kanji: '漢字 hop! step! jump!', mix: '練習 · ' + t('app.mixName') })[book.value])
+const heading = computed(() => ({ home: '文法ノート', bunpo: 'わたしの文法ノート', kanji: '漢字 hop! step! jump!', mix: '練習 · ' + t('app.mixName'), conj: '活用 · ' + t('conj.name') })[book.value])
 const sub = computed(() => {
   if (book.value === 'home') return t('app.sub.home')
   if (book.value === 'mix') return t('app.sub.mix')
+  if (book.value === 'conj') return t('conj.sub')
   if (cur.value == null) return book.value === 'bunpo' ? 'できる日本語 初級' : '初級 I · WEWORLD'
   const it = items.value.find(i => i.key === cur.value)
   const base = `${it.label} ${it.title}`
@@ -52,12 +54,13 @@ const sub = computed(() => {
 const crumb = computed(() => {
   if (book.value === 'home') return t('app.crumb.home')
   if (book.value === 'mix') return t('app.crumb.mix')
+  if (book.value === 'conj') return t('conj.crumb')
   const it = items.value.find(i => i.key === cur.value)
   if (it) return `${it.label} ${it.title}`
   return t(book.value === 'bunpo' ? 'app.crumb.bunpo' : 'app.crumb.kanji')
 })
 
-// Troca de livro: o menu NÃO fecha (você ainda vai escolher a lição). Só fecha em Início e Treino misto,
+// Troca de livro: o menu NÃO fecha (você ainda vai escolher a lição). Só fecha em Início, Conjugação e Treino misto,
 // que não têm lista. Voltando a um livro, você retorna à lição em que estava.
 function setBook(b) {
   if (b !== book.value) {
@@ -69,7 +72,7 @@ function setBook(b) {
     view.value = cur.value == null ? 'home' : 'menu'
     window.scrollTo(0, 0)
   }
-  if (b === 'home' || b === 'mix') open.value = false
+  if (b === 'home' || b === 'mix' || b === 'conj') open.value = false
 }
 // vindo dos cartões da página inicial: no celular já abre a lista de lições
 function openBook(b) {
@@ -95,7 +98,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   <SideMenu :open="open" :current="cur" :book="book" :items="items" @select="select" @book="setBook" @close="open = false" />
   <div class="wrap">
     <div class="topics-col">
-      <TopicNav v-if="view === 'menu' && labels.length > 1 && book !== 'home' && book !== 'mix'" v-model:tab="tab" :labels="labels" :title="t(book === 'bunpo' ? 'app.parts' : 'app.sections')" />
+      <TopicNav v-if="view === 'menu' && labels.length > 1 && book !== 'home' && book !== 'mix' && book !== 'conj'" v-model:tab="tab" :labels="labels" :title="t(book === 'bunpo' ? 'app.parts' : 'app.sections')" />
     </div>
     <main>
       <h1>{{ heading }}</h1>
@@ -103,6 +106,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
       <!-- os treinos geram as questões já no idioma escolhido: ao trocar de idioma, recomeçam (:key) -->
       <HomePage v-if="book === 'home'" @open="openBook" />
       <PracticeMix v-else-if="book === 'mix'" :key="'mix-' + locale" />
+      <ConjPractice v-else-if="book === 'conj'" :key="'conj-' + locale" />
       <p v-else-if="view === 'home'">{{ t(book === 'bunpo' ? 'app.chooseLesson' : 'app.chooseChapter') }}</p>
       <LessonPage v-else-if="view === 'menu' && book === 'bunpo'" v-model:tab="tab" :lesson="cur" @go="go" />
       <ChapterPage v-else-if="view === 'menu'" v-model:tab="tab" :chapter="cur" @go="go" />

@@ -25,7 +25,7 @@ export default {
     mix: 'Mixed practice',
     home: 'Home',
     mixLead: 'Choose the lessons and exercise types on the main screen.',
-    homeLead: 'Choose one of the three menus above, or read the introduction.',
+    homeLead: 'Choose one of the four menus above, or read the introduction.',
     soon: 'coming soon',
   },
   common: {
@@ -209,7 +209,7 @@ export default {
     p2: 'The goal is to go beyond recognizing: you read the grammar summary of each lesson and then <b>practice by writing in Japanese</b>, typing in romaji, which the app converts to kana as you type.',
     p3: 'It does not replace the books. The explanations, examples and exercises were written for this app, following the grammar and kanji list of each lesson.',
     h2: 'The menus',
-    menusLead: 'The three buttons at the top of the side menu:',
+    menusLead: 'The four buttons at the top of the side menu:',
     bunpoTitle: '文法 · Grammar',
     bunpo1: 'Lessons from the grammar notebook. <b>{n} of {total}</b> are ready (lessons {list}); the others are grayed out as “coming soon”.',
     bunpo2: 'Each lesson has <b>3 parts</b>, as in the book. Choose a part in the side column (or in the tabs, on narrow screens) to read the <b>grammar summary</b>, with the sentence pattern, a short explanation and examples with furigana and translation. At the bottom of the page is <b>Practice time</b>:',
@@ -241,4 +241,77 @@ export default {
     tip3: '<b>Offline:</b> the app is a PWA. After the first visit, it works without internet and can be installed from the browser (“Install app” or “Add to Home Screen”).',
     tip4: '<b>Your progress:</b> your best streak is saved on the device you study on.',
   },
+  // treino só de conjugação (menu 活用)
+  conj: {
+    "name": "Conjugation",
+    "sub": "Practice only verb and adjective conjugation",
+    "crumb": "活用 · Conjugation",
+    "title": "Conjugation practice",
+    "menuLead": "Choose the words and forms on the main screen.",
+    "lead": "Verbs and adjectives only: choose the words and forms, then type the requested conjugation.",
+    "words": "Words",
+    "w": {
+      "v": "Verbs",
+      "i": "い-adjectives",
+      "na": "な-adjectives"
+    },
+    "nWords": "{n} words",
+    "groups": "Verb groups",
+    "g": {
+      "u": "う-verbs (五段)",
+      "ru": "る-verbs (一段)",
+      "irr": "Irregular (する・来る)"
+    },
+    "cat": {
+      "u": "Verb · う group",
+      "ru": "Verb · る group",
+      "irr": "Irregular verb",
+      "i": "い-adjective",
+      "na": "な-adjective"
+    },
+    "vForms": {
+      "polite": "Verb · polite forms (ます)",
+      "plain": "Verb · plain forms"
+    },
+    "aForms": {
+      "polite": "Adjective · polite forms (です)",
+      "plain": "Adjective · plain forms",
+      "link": "Adjective · linking and becoming"
+    },
+    "all": "select all",
+    "none": "clear all",
+    "f": {
+      "masu": "polite affirmative",
+      "masen": "polite negative",
+      "mashita": "polite past",
+      "masendeshita": "polite past negative",
+      "tai": "want to do",
+      "mashou": "let’s…",
+      "dict": "dictionary form (from the ます form)",
+      "te": "て form",
+      "ta": "plain past",
+      "tara": "if / when",
+      "nai": "plain negative",
+      "nakatta": "plain past negative"
+    },
+    "a": {
+      "neg": "polite negative",
+      "past": "polite past",
+      "pastneg": "polite past negative",
+      "pnai": "plain negative",
+      "pta": "plain past",
+      "pnakatta": "plain past negative",
+      "te": "て form (linking)",
+      "naru": "to become…"
+    },
+    "rulesBefore": "Show the rule before answering",
+    "empty": "Choose at least one form (and one group, for verbs) for the word types you selected.",
+    "hint": "Type in romaji: lowercase becomes ひらがな (masu → ます, nn → ん, xtu → っ). Answers count in kanji or in kana only. For な-adjective negatives, both じゃ and では are accepted. Your choices are saved on this device.",
+    "form": "Form",
+    "best": "best streak: {n}",
+    "againDesc": "{n} questions with the same forms",
+    "home1": "To practice <b>conjugation only</b>, without sentences: choose verbs, い-adjectives and な-adjectives, the verb groups and the forms (ます, ません, ました, て, ない, た, たら, くない, かった, じゃない, でした…).",
+    "home2": "Each question shows the word and the requested form; after you answer, the rule appears. At the end you see your score <b>per form</b> and can redo only your mistakes.",
+    "homeBtn": "Open conjugation"
+  }
 }

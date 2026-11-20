@@ -46,6 +46,13 @@ const nChapters = KCHAPTERS.filter(c => c.ready).length
     </article>
 
     <article class="topic">
+      <h2>活用 · {{ t('conj.name') }}</h2>
+      <p v-html="t('conj.home1')"></p>
+      <p v-html="t('conj.home2')"></p>
+      <button @click="$emit('open', 'conj')">{{ t('conj.homeBtn') }}</button>
+    </article>
+
+    <article class="topic">
       <h2>{{ t('home.mixTitle') }}</h2>
       <p v-html="t('home.mix1')"></p>
       <p><span class="pat">{{ t('home.mConj') }}</span> {{ t('home.mConjD') }}</p>

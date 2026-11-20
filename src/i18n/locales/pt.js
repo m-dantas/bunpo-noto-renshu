@@ -26,7 +26,7 @@ export default {
     mix: 'Treino misto',
     home: 'Início',
     mixLead: 'Escolha as lições e os tipos de exercício na tela ao lado.',
-    homeLead: 'Escolha um dos três menus acima, ou leia a apresentação ao lado.',
+    homeLead: 'Escolha um dos quatro menus acima, ou leia a apresentação ao lado.',
     soon: 'em breve',
   },
   common: {
@@ -211,7 +211,7 @@ export default {
     p2: 'A ideia é ir além de reconhecer: você lê o resumo da gramática de cada lição e depois <b>pratica escrevendo em japonês</b>, digitando em romaji, que o app converte em kana na hora.',
     p3: 'Ele não substitui os livros. As explicações, os exemplos e os exercícios foram escritos para este app, seguindo a lista de gramática e de kanji de cada lição.',
     h2: 'Os menus',
-    menusLead: 'Os três botões no topo do menu lateral:',
+    menusLead: 'Os quatro botões no topo do menu lateral:',
     bunpoTitle: '文法 · Gramática',
     bunpo1: 'Lições do caderno de gramática. Hoje estão prontas <b>{n} de {total}</b> (lições {list}); as outras aparecem em cinza, como “em breve”.',
     bunpo2: 'Cada lição tem <b>3 partes</b>, como no livro. Escolha uma parte na coluna ao lado (ou nas abas, em telas estreitas) para ler o <b>resumo de gramática</b>, com o padrão da frase, uma explicação curta e exemplos com furigana e tradução. No fim da página há a <b>Hora de praticar</b>:',
@@ -243,4 +243,77 @@ export default {
     tip3: '<b>Offline:</b> o app é uma PWA. Depois do primeiro acesso, ele funciona sem internet e pode ser instalado pelo navegador (“Instalar app” ou “Adicionar à tela inicial”).',
     tip4: '<b>Seu progresso:</b> o recorde de sequência fica guardado no aparelho em que você estuda.',
   },
+  // treino só de conjugação (menu 活用)
+  conj: {
+    "name": "Conjugação",
+    "sub": "Treino só de conjugação de verbos e adjetivos",
+    "crumb": "活用 · Conjugação",
+    "title": "Treino de conjugação",
+    "menuLead": "Escolha as palavras e as formas na tela ao lado.",
+    "lead": "Só verbos e adjetivos: escolha as palavras e as formas, e escreva a conjugação pedida.",
+    "words": "Palavras",
+    "w": {
+      "v": "Verbos",
+      "i": "い-adjetivos",
+      "na": "な-adjetivos"
+    },
+    "nWords": "{n} palavras",
+    "groups": "Grupos de verbo",
+    "g": {
+      "u": "Grupo う (五段)",
+      "ru": "Grupo る (一段)",
+      "irr": "Irregulares (する・来る)"
+    },
+    "cat": {
+      "u": "Verbo · grupo う",
+      "ru": "Verbo · grupo る",
+      "irr": "Verbo irregular",
+      "i": "い-adjetivo",
+      "na": "な-adjetivo"
+    },
+    "vForms": {
+      "polite": "Verbo · formas polidas (ます)",
+      "plain": "Verbo · formas simples"
+    },
+    "aForms": {
+      "polite": "Adjetivo · formas polidas (です)",
+      "plain": "Adjetivo · formas simples",
+      "link": "Adjetivo · ligar e ficar"
+    },
+    "all": "marcar todas",
+    "none": "desmarcar todas",
+    "f": {
+      "masu": "afirmativa polida",
+      "masen": "negativa polida",
+      "mashita": "passado polido",
+      "masendeshita": "passado negativo polido",
+      "tai": "querer fazer",
+      "mashou": "vamos…",
+      "dict": "forma do dicionário (a partir da forma ます)",
+      "te": "forma て",
+      "ta": "passado simples",
+      "tara": "se / quando",
+      "nai": "negativa simples",
+      "nakatta": "passado negativo simples"
+    },
+    "a": {
+      "neg": "negativa polida",
+      "past": "passado polido",
+      "pastneg": "passado negativo polido",
+      "pnai": "negativa simples",
+      "pta": "passado simples",
+      "pnakatta": "passado negativo simples",
+      "te": "forma て (ligação)",
+      "naru": "ficar…"
+    },
+    "rulesBefore": "Mostrar a regra antes de responder",
+    "empty": "Escolha pelo menos uma forma (e um grupo, para os verbos) dos tipos de palavra marcados.",
+    "hint": "Digite em romaji: minúsculas viram ひらがな (masu → ます, nn → ん, xtu → っ). A resposta vale em kanji ou só em kana. Nas negativas de な-adjetivo, じゃ e では valem as duas. Suas escolhas ficam guardadas neste aparelho.",
+    "form": "Forma",
+    "best": "melhor sequência: {n}",
+    "againDesc": "{n} questões com as mesmas formas",
+    "home1": "Para treinar <b>só a conjugação</b>, sem frases: você escolhe se quer verbos, い-adjetivos e な-adjetivos, os grupos de verbo e as formas (ます, ません, ました, て, ない, た, たら, くない, かった, じゃない, でした…).",
+    "home2": "Cada questão mostra a palavra e a forma pedida; depois de responder, aparece a regra. No fim, você vê os acertos <b>por forma</b> e pode refazer só os erros.",
+    "homeBtn": "Abrir a conjugação"
+  }
 }

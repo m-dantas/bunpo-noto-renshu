@@ -33,10 +33,12 @@ async function change() {
     <div class="seg" role="group" :aria-label="t('menu.book')">
       <button type="button" :class="{ on: book === 'bunpo' }" @click="$emit('book', 'bunpo')">文法</button>
       <button type="button" :class="{ on: book === 'kanji' }" @click="$emit('book', 'kanji')">漢字</button>
+      <button type="button" :class="{ on: book === 'conj' }" @click="$emit('book', 'conj')">活用</button>
       <button type="button" :class="{ on: book === 'mix' }" @click="$emit('book', 'mix')">練習</button>
     </div>
-    <h2>{{ t(book === 'bunpo' ? 'menu.lessons' : book === 'kanji' ? 'menu.chapters' : book === 'mix' ? 'menu.mix' : 'menu.home') }}</h2>
+    <h2>{{ t(book === 'bunpo' ? 'menu.lessons' : book === 'kanji' ? 'menu.chapters' : book === 'mix' ? 'menu.mix' : book === 'conj' ? 'conj.title' : 'menu.home') }}</h2>
     <p v-if="book === 'mix'" class="lead" style="margin: 0 8px">{{ t('menu.mixLead') }}</p>
+    <p v-if="book === 'conj'" class="lead" style="margin: 0 8px">{{ t('conj.menuLead') }}</p>
     <p v-if="book === 'home'" class="lead" style="margin: 0 8px">{{ t('menu.homeLead') }}</p>
     <ul id="lessons">
       <li v-for="it in items" :key="it.key">
